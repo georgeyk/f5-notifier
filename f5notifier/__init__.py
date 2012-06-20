@@ -18,3 +18,7 @@
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ##
 ##
+
+PROGRAM_NAME = 'F5 Notifier'
+VERSION = '0.1'
+WEBSITE = 'https://launchpad.net/f5-notifier'
