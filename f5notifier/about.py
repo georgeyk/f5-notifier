@@ -37,6 +37,6 @@ def run_about_dialog(parent):
                              license_type=Gtk.License.GPL_3_0,
                              authors=['George Kussumoto'],
                              #logo=logo.get_pixbuf(),
-                             flags=flags)
+                             parent=parent, flags=flags)
     dialog.run()
     dialog.destroy()

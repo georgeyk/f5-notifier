@@ -27,6 +27,8 @@ import sys
 from gi.repository import AppIndicator3 as appindicator
 from gi.repository import Gtk
 
+from about import run_about_dialog
+
 
 class F5Notifier(object):
 
@@ -52,7 +54,7 @@ class F5Notifier(object):
         add_resource.connect('activate', self._on_add_resource__activated)
         add_resource.show()
 
-        monitor = Gtk.ImageMenuItem(Gtk.STOCK_ZOOM_IN)
+        monitor = Gtk.ImageMenuItem.new_from_stock(Gtk.STOCK_ZOOM_IN, None)
         monitor.set_always_show_image(True)
         menu.append(monitor)
         monitor.connect('activate', self._on_monitor__activated)
@@ -62,7 +64,8 @@ class F5Notifier(object):
         menu.append(sep1)
         sep1.show()
 
-        settings = Gtk.ImageMenuItem(Gtk.STOCK_PREFERENCES)
+        settings = Gtk.ImageMenuItem.new_from_stock(
+                                            Gtk.STOCK_PREFERENCES, None)
         settings.set_always_show_image(True)
         menu.append(settings)
         settings.connect('activate', self._on_settings__activated)
@@ -72,13 +75,13 @@ class F5Notifier(object):
         menu.append(sep2)
         sep2.show()
 
-        about = Gtk.ImageMenuItem(Gtk.STOCK_ABOUT)
+        about = Gtk.ImageMenuItem.new_from_stock(Gtk.STOCK_ABOUT, None)
         about.set_always_show_image(True)
         menu.append(about)
         about.connect('activate', self._on_about__activated)
         about.show()
 
-        quit = Gtk.ImageMenuItem(Gtk.STOCK_QUIT)
+        quit = Gtk.ImageMenuItem.new_from_stock(Gtk.STOCK_QUIT, None)
         quit.set_always_show_image(True)
         quit.connect('activate', self._on_quit__activated)
         quit.show()
@@ -107,7 +110,8 @@ class F5Notifier(object):
         print widget, 'settings'
 
     def _on_about__activated(self, widget):
-        print widget, 'about'
+        parent = widget.get_parent().get_parent()
+        run_about_dialog(parent)
 
     def _on_quit__activated(self, widget):
         sys.exit(0)
