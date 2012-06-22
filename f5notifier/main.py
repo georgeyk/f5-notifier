@@ -22,12 +22,12 @@
 #from gettext import gettext as _
 #import gettext
 #gettext.textdomain('f5-notifier')
-import sys
 
 from gi.repository import AppIndicator3 as appindicator
 from gi.repository import Gtk
 
-from about import run_about_dialog
+from about import get_about_dialog
+from utils import find_resources_dir
 
 
 class F5Notifier(object):
@@ -38,6 +38,10 @@ class F5Notifier(object):
                 appindicator.IndicatorCategory.APPLICATION_STATUS)
         self.indicator.set_status(appindicator.IndicatorStatus.ACTIVE)
         self.indicator.set_attention_icon('indicator-messages-new')
+        images_dir = find_resources_dir('images')
+        if images_dir:
+            self.indicator.set_icon_theme_path(images_dir)
+            self.indicator.set_icon('f5notifier')
 
         menu = self._build_menu()
         self.indicator.set_menu(menu)
@@ -110,11 +114,19 @@ class F5Notifier(object):
         print widget, 'settings'
 
     def _on_about__activated(self, widget):
+        # I'm pretty sure that might be 'right' way to prevent the user open
+        # multiple dialogs.
+        if hasattr(self, 'about'):
+            return
+
         parent = widget.get_parent().get_parent()
-        run_about_dialog(parent)
+        self.about = get_about_dialog(parent)
+        self.about.run()
+        self.about.destroy()
+        del self.about
 
     def _on_quit__activated(self, widget):
-        sys.exit(0)
+        Gtk.main_quit()
 
 
 # testing

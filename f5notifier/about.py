@@ -21,13 +21,17 @@
 
 from gi.repository import Gtk
 
+from utils import find_resource
 
-def run_about_dialog(parent):
-    flags = Gtk.DialogFlags.MODAL & Gtk.DialogFlags.DESTROY_WITH_PARENT
-    #FIXME: substitute hardcoded values, prevent multiple about dialogs
-    #logo = Gtk.Image()
-    #logo_path = ''
-    #logo.set_from_file(logo_path)
+
+def get_about_dialog(parent):
+    logo = Gtk.Image()
+    logo_path = find_resource('images', 'logo-64.png')
+    if logo_path:
+        logo.set_from_file(logo_path)
+    else:
+        logo = None
+
     dialog = Gtk.AboutDialog(program_name='F5 Notifier',
                              version='0.1',
                              copyright='2012 © George Kussumoto',
@@ -36,7 +40,10 @@ def run_about_dialog(parent):
                              icon_name='gtk-about',
                              license_type=Gtk.License.GPL_3_0,
                              authors=['George Kussumoto'],
-                             #logo=logo.get_pixbuf(),
-                             parent=parent, flags=flags)
-    dialog.run()
-    dialog.destroy()
+                             flags=Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                             parent=parent)
+    dialog.set_transient_for(parent)
+    if logo:
+        dialog.set_logo(logo.get_pixbuf())
+
+    return dialog
