@@ -19,6 +19,7 @@
 ##
 ##
 
+import os.path
 import time
 
 from gi.repository import Gtk
@@ -46,3 +47,16 @@ def open_file(uri, show_dialog=True, parent=None):
             warn_user('Error', e.message, parent=parent)
 
     return retval
+
+def find_resources_dir(resource_type):
+    data_dir = os.path.realpath('../data')
+    directory = data_dir + '/' + resource_type
+    if os.path.isdir(directory):
+        return directory
+
+def find_resource(resource_type, resource_name):
+    resource_dir = find_resources_dir(resource_type)
+    if resource_dir:
+        filepath = resource_dir + '/' + resource_name
+        if os.path.isfile(filepath):
+            return filepath
