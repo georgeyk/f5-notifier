@@ -21,15 +21,68 @@
 
 from gi.repository import Gtk
 
+from models import Resource
 from utils import find_resource
 
 
 class ResourceDialog(object):
-    def __init__(self, parent):
+    def __init__(self, parent, resource=None):
         builder = Gtk.Builder()
-        builder.add_from_file(find_resource('ui', 'AddResource.glade'))
-        #builder.connect_signals(self)
-        self.window = builder.get_object('AddResource')
+        builder.add_from_file(find_resource('ui', 'Resource.glade'))
+        builder.connect_signals(self)
+        self.window = builder.get_object('Resource')
+        self.uri_entry = builder.get_object('uri_entry')
+        self.unit_combo = builder.get_object('unit_combo')
+        self.interval = builder.get_object('interval')
+        self.interval_adjustment = builder.get_object('interval_adjustment')
+        self.interval.set_value(5)
+
+    #
+    # Private API
+    #
+
+    def _read_combo_unit_value(self):
+        tree_iter = self.unit_combo.get_active_iter()
+        if tree_iter != None:
+            model = self.unit_combo.get_model()
+            unit = model[tree_iter][0]
+            return unit
+
+    def _update_adjustment(self, unit):
+        value = self.interval.get_value()
+        if unit == 'seconds':
+            self.interval_adjustment.set_lower(5)
+            self.interval_adjustment.set_upper(59)
+            if value < 5:
+                self.interval.set_value(5)
+        elif unit == 'hours':
+            self.interval_adjustment.set_lower(1)
+            self.interval_adjustment.set_upper(23)
+            if value > 23:
+                self.interval.set_value(23)
+        else:
+            self.interval_adjustment.set_lower(1)
+            self.interval_adjustment.set_upper(59)
+
+    def _get_interval_value(self):
+        value = self.interval.get_value()
+        unit = self._read_combo_unit_value()
+        if unit == 'minutes':
+            value = value * 60
+        elif unit == 'hours':
+            value = value * 60 * 60
+        return value
+
+    def _save_resource(self):
+        uri = self.uri_entry.get_text()
+        interval = self._get_interval_value()
+        resource = Resource(uri, interval)
+        # validate & message user
+        # emit signal
+
+    #
+    # Public API
+    #
 
     def run(self):
         return self.window.run()
@@ -40,3 +93,13 @@ class ResourceDialog(object):
     #
     # Callbacks
     #
+
+    def _on_add_button__clicked(self, widget):
+        self._save_resource()
+
+    def _on_filechooser_button__file_set(self, widget):
+        uri = widget.get_uri()
+        self.uri_entry.set_text(uri)
+
+    def _on_unit_combo__changed(self, widget):
+        self._update_adjustment(self._read_combo_unit_value())
