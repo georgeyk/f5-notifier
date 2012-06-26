@@ -33,6 +33,14 @@ def warn_user(title, message, parent=None):
     dialog.run()
     dialog.destroy()
 
+def yesno(title, message, parent):
+    flags = Gtk.DialogFlags.MODAL
+    dialog = Gtk.MessageDialog(parent, flags, Gtk.MessageType.QUESTION,
+                               Gtk.ButtonsType.YES_NO, title)
+    dialog.format_secondary_text(message)
+    retval = dialog.run()
+    dialog.destroy()
+    return retval
 
 def open_file(uri, show_dialog=True, parent=None):
     # Currently, we just support local and web files, defaults to local files.
