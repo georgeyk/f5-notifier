@@ -26,6 +26,7 @@
 from gi.repository import AppIndicator3 as appindicator
 from gi.repository import Gtk
 
+from models import ResourceManager
 from about import get_about_dialog
 from resource import ResourceDialog
 from resource_monitor import ResourceMonitor
@@ -48,6 +49,7 @@ class F5Notifier(object):
 
         menu = self._build_menu()
         self.indicator.set_menu(menu)
+        self._manager = ResourceManager()
 
     #
     # Private API
@@ -99,11 +101,12 @@ class F5Notifier(object):
     def _run_dialog(self, dialog_klass, parent):
         # I'm pretty sure that might be 'right' way to prevent the user open
         # multiple dialogs.
+        # Move this to a utility function
         name = dialog_klass.__name__
         if hasattr(self, name):
             return
 
-        dialog = dialog_klass(parent)
+        dialog = dialog_klass(self._manager, parent)
         setattr(self, name, dialog)
         dialog.run()
         dialog.destroy()

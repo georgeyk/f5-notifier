@@ -26,7 +26,7 @@ from utils import find_resource
 
 
 class ResourceDialog(object):
-    def __init__(self, parent, resource=None):
+    def __init__(self, manager, parent, resource=None):
         builder = Gtk.Builder()
         builder.add_from_file(find_resource('ui', 'Resource.glade'))
         builder.connect_signals(self)
@@ -36,6 +36,7 @@ class ResourceDialog(object):
         self.interval = builder.get_object('interval')
         self.interval_adjustment = builder.get_object('interval_adjustment')
         self.interval.set_value(5)
+        self._manager = manager
 
     #
     # Private API
@@ -77,8 +78,8 @@ class ResourceDialog(object):
         uri = self.uri_entry.get_text()
         interval = self._get_interval_value()
         resource = Resource(uri, interval)
+        self._manager.add_resource(resource)
         # validate & message user
-        # emit signal
 
     #
     # Public API

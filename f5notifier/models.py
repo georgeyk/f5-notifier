@@ -23,6 +23,8 @@ import datetime
 import hashlib
 import urllib2
 
+from gi.repository import GObject
+
 
 class Resource(object):
     def __init__(self, filename, interval, check_now=True):
@@ -82,7 +84,7 @@ class Resource(object):
             self.hash_value = hash_value
 
         if self.hash_value == hash_value:
-            self.status_description = 'CHECKED'
+            self.status_description = 'OK'
         else:
             self.hash_value = hash_value
             self.status_code = f.getcode() or 'OK'
@@ -90,3 +92,49 @@ class Resource(object):
             return False
 
         return True
+
+    def start(self):
+        pass
+
+    def stop(self):
+        pass
+
+
+class ResourceManager(GObject.GObject):
+    resources =  []
+    __gsignals__ = {
+            'added': (GObject.SIGNAL_RUN_FIRST, None, (object,)),
+            'edited': (GObject.SIGNAL_RUN_FIRST, None, (object,)),
+            'removed': (GObject.SIGNAL_RUN_FIRST, None, (object,)),
+            'started': (GObject.SIGNAL_RUN_FIRST, None, (object,)),
+            'stopped': (GObject.SIGNAL_RUN_FIRST, None, (object,)),
+    }
+
+    def __init__(self):
+        GObject.GObject.__init__(self)
+
+    #
+    # Public API
+    #
+
+    def add_resource(self, resource):
+        # TODO: connect signals/callbacks
+        self.resources.append(resource)
+        self.emit('added', resource)
+
+    def remove_resource(self, resource):
+        self.resources.remove(resource)
+        self.emit('removed', resource)
+
+    def edited_resource(self, resource):
+        self.emit('edited', resource)
+
+    def start_resource(self, resource):
+        if resource in self.resources:
+            resource.start()
+            self.emit('started', resource)
+
+    def stop_resource(self, resource):
+        if resource in self.resources:
+            resource.stop()
+            self.emit('stopped', resource)

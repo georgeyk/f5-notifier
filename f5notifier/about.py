@@ -24,7 +24,7 @@ from gi.repository import Gtk
 from utils import find_resource
 
 
-def get_about_dialog(parent):
+def get_about_dialog(manager, parent):
     logo = Gtk.Image()
     logo_path = find_resource('images', 'logo-64.png')
     if logo_path:

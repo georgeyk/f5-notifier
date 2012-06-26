@@ -21,15 +21,24 @@
 
 from gi.repository import Gtk
 
-from utils import find_resource
+from utils import yesno, find_resource
 
 
 class ResourceMonitor(object):
-    def __init__(self, parent):
+    def __init__(self, manager, parent):
+        self._parent = parent
         builder = Gtk.Builder()
         builder.add_from_file(find_resource('ui', 'ResourceMonitor.glade'))
         builder.connect_signals(self)
         self.window = builder.get_object('ResourceMonitor')
+
+    #
+    # Private API
+    #
+
+    #
+    # Public API
+    #
 
     def run(self):
         return self.window.run()
@@ -44,5 +53,10 @@ class ResourceMonitor(object):
     def _on_open_button__clicked(self, widget):
         print widget, 'open'
 
-    def _on_filter_entry__changed(self, widget):
-        print widget, 'filter change'
+    def _on_remove_button__clicked(self, widget):
+        retval = yesno('Remove Resource',
+                    'Are you sure you want to remove the selected resource ?',
+                     parent=self._parent)
+        if retval == Gtk.ResponseType.YES:
+            pass
+            # get resource and remove it
