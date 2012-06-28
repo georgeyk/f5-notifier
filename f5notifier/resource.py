@@ -72,7 +72,7 @@ class ResourceDialog(object):
             value = value * 60
         elif unit == 'hours':
             value = value * 60 * 60
-        return value
+        return int(value)
 
     def _save_resource(self):
         uri = self.uri_entry.get_text()

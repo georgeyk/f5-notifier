@@ -23,20 +23,36 @@ import datetime
 import hashlib
 import urllib2
 
-from gi.repository import GObject
+from gi.repository import GObject, GLib
 
 
-class Resource(object):
-    def __init__(self, filename, interval, check_now=True):
+#TODO: this should be splitted in two parts, one that really is a model and
+# other that emits the signals
+
+class Resource(GObject.GObject):
+    __gsignals__ = {
+            'checked': (GObject.SIGNAL_RUN_FIRST, None, ()),
+    }
+
+    (STATUS_STARTED,
+     STATUS_STOPPED) = range(2)
+
+    def __init__(self, filename, interval):
+        GObject.GObject.__init__(self)
+
         self.filename = filename
-        interval = interval
+        self.interval = interval
         self.hash_value = ''
         self.added = datetime.datetime.now()
         self.last_checked = ''
         self.status_code = ''
         self.status_description = ''
-        if check_now:
-            self.check_change()
+        self.running_status = Resource.STATUS_STOPPED
+        self.source_id = None
+
+    def __str__(self):
+        return '<Resource: %s - %s: %s>' % (self.filename, self.status_code,
+                                            self.status_description)
 
     #
     # Private API
@@ -50,13 +66,9 @@ class Resource(object):
         hasher.update(data)
         return hasher.digest()
 
-    #
-    # Public API
-    #
-
-    def check_change(self):
+    def _open_resource(self):
         try:
-            f = urllib2.urlopen(self.filename)
+            resource = urllib2.urlopen(self.filename)
             self.last_checked = datetime.datetime.now()
         except (urllib2.URLError, urllib2.HTTPError), e:
             self.status_code = e.errno
@@ -70,15 +82,34 @@ class Resource(object):
             if not self.status_description:
                 self.status_description = str(e)
                 self.status_code = self.status_code or 'ERROR'
-            return True
         except ValueError, e:
             self.status_code = 'ERROR'
             self.status_description = e.message
+            self.source_id = None
+            self.running_status = Resource.STATUS_STOPPED
+
+        return resource
+
+    #
+    # Public API
+    #
+
+    def check_change(self):
+        if self.running_status == Resource.STATUS_STOPPED:
+            self.source_id = None
+            self.emit('checked')
             return False
 
-        hash_value = self._generate_hash_value(f)
-        f.close()
-        self.status_code = f.getcode() or 'OK'
+        fp = self._open_resource()
+        if fp is None:
+            # if we don't have hash value set, then we have a status error, so
+            # we don't need to check the file content.
+            self.emit('checked')
+            return bool(self.hash_value)
+
+        hash_value = self._generate_hash_value(fp)
+        self.status_code = fp.getcode() or 'OK'
+        fp.close()
 
         if not self.hash_value:
             self.hash_value = hash_value
@@ -87,17 +118,22 @@ class Resource(object):
             self.status_description = 'OK'
         else:
             self.hash_value = hash_value
-            self.status_code = f.getcode() or 'OK'
             self.status_description = 'CHANGED'
+            self.source_id = None
+            self.emit('checked')
             return False
 
+        self.emit('checked')
         return True
 
     def start(self):
-        pass
+        if self.source_id is None:
+            self.running_status = Resource.STATUS_STARTED
+            self.source_id = GLib.timeout_add_seconds(self.interval,
+                                                      self.check_change)
 
     def stop(self):
-        pass
+        self.running_status = Resource.STATUS_STOPPED
 
 
 class ResourceManager(GObject.GObject):
@@ -108,6 +144,7 @@ class ResourceManager(GObject.GObject):
             'removed': (GObject.SIGNAL_RUN_FIRST, None, (object,)),
             'started': (GObject.SIGNAL_RUN_FIRST, None, (object,)),
             'stopped': (GObject.SIGNAL_RUN_FIRST, None, (object,)),
+            'resource-checked': (GObject.SIGNAL_RUN_FIRST, None, (object,)),
     }
 
     def __init__(self):
@@ -119,15 +156,23 @@ class ResourceManager(GObject.GObject):
 
     def add_resource(self, resource):
         # TODO: connect signals/callbacks
-        self.resources.append(resource)
-        self.emit('added', resource)
+        if resource not in self.resources:
+            resource.connect('checked', self._on_resource__checked)
+            self.resources.append(resource)
+            resource.start()
+            self.emit('added', resource)
+        else:
+            print 'resource already added'
 
     def remove_resource(self, resource):
-        self.resources.remove(resource)
-        self.emit('removed', resource)
+        if resource in self.resources:
+            self.resources.remove(resource)
+            resource.stop()
+            self.emit('removed', resource)
 
     def edited_resource(self, resource):
-        self.emit('edited', resource)
+        if resource in self.resources:
+            self.emit('edited', resource)
 
     def start_resource(self, resource):
         if resource in self.resources:
@@ -138,3 +183,11 @@ class ResourceManager(GObject.GObject):
         if resource in self.resources:
             resource.stop()
             self.emit('stopped', resource)
+
+    #
+    # Callbacks
+    #
+
+    def _on_resource__checked(self, resource):
+        print resource
+        self.emit('resource-checked', resource)
