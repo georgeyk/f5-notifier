@@ -82,11 +82,13 @@ class Resource(GObject.GObject):
             if not self.status_description:
                 self.status_description = str(e)
                 self.status_code = self.status_code or 'ERROR'
-        except ValueError, e:
+            return
+        except Exception, e:
             self.status_code = 'ERROR'
-            self.status_description = e.message
+            self.status_description = e.message or str(e)
             self.source_id = None
             self.running_status = Resource.STATUS_STOPPED
+            return
 
         return resource
 
