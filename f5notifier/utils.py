@@ -22,7 +22,7 @@
 import os.path
 import time
 
-from gi.repository import Gtk
+from gi.repository import Gtk, Gdk
 from gi._glib import GError
 
 
@@ -62,12 +62,9 @@ def yesno(title, message, parent):
     return retval
 
 def open_file(uri, show_dialog=True, parent=None):
-    # Currently, we just support local and web files, defaults to local files.
-    if not uri.startswith('http://') or not uri.startswith('file:///'):
-        uri = 'file://' + uri
-
     try:
-        retval = Gtk.show_uri(None, uri, time.time())
+        screen = Gdk.Screen.get_default()
+        retval = Gtk.show_uri(screen, uri, time.time())
     except GError, e:
         retval = False
         if show_dialog:

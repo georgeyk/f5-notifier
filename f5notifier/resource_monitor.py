@@ -21,7 +21,7 @@
 
 from gi.repository import Gtk
 
-from utils import yesno, find_resource
+from utils import yesno, find_resource, open_file
 
 
 class ResourceMonitor(object):
@@ -31,10 +31,25 @@ class ResourceMonitor(object):
         builder.add_from_file(find_resource('ui', 'ResourceMonitor.glade'))
         builder.connect_signals(self)
         self.window = builder.get_object('ResourceMonitor')
+        self.add_button = builder.get_object('add_button')
+        self.edit_button = builder.get_object('edit_button')
+        self.remove_button = builder.get_object('remove_button')
+        self.open_button = builder.get_object('open_button')
+        self.start_button = builder.get_object('start_button')
+        self.stop_button = builder.get_object('stop_button')
+        self.resource_selection = builder.get_object('resource_selection')
+        self._update_widgets()
 
     #
     # Private API
     #
+
+    def _update_widgets(self, selected=None):
+        needs_selection_buttons =  [self.edit_button, self.remove_button,
+                                    self.open_button, self.start_button,
+                                    self.stop_button]
+        for button in needs_selection_buttons:
+            button.set_sensitive(bool(selected))
 
     #
     # Public API
@@ -51,7 +66,13 @@ class ResourceMonitor(object):
     #
 
     def _on_open_button__clicked(self, widget):
-        print widget, 'open'
+        selection, tree_iter = self.resource_selection.get_selected()
+        if tree_iter:
+            selected = selection[tree_iter][0]
+            #XXX: it seems that setting the parent fixes the 'operation not
+            # permitted' exception. I really don't know why, since it its not
+            # used by open_file in case of success. :S annoying
+            open_file(selected, parent=self._parent)
 
     def _on_remove_button__clicked(self, widget):
         retval = yesno('Remove Resource',
@@ -60,3 +81,12 @@ class ResourceMonitor(object):
         if retval == Gtk.ResponseType.YES:
             pass
             # get resource and remove it
+
+    def _on_resource_view__selection_changed(self, selection):
+        model, tree_iter = selection.get_selected()
+        if tree_iter:
+            selected = model[tree_iter][0]
+        else:
+            selected = None
+
+        self._update_widgets(selected)

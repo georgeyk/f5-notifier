@@ -1,32 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <!-- interface-requires gtk+ 3.0 -->
-  <object class="GtkListStore" id="resources_list">
-    <columns>
-      <!-- column-name URI -->
-      <column type="gchararray"/>
-      <!-- column-name Status -->
-      <column type="gchararray"/>
-      <!-- column-name Description -->
-      <column type="gchararray"/>
-      <!-- column-name Last -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">file:///teste/</col>
-        <col id="1" translatable="yes">OK</col>
-        <col id="2" translatable="yes">CHECKED</col>
-        <col id="3" translatable="yes">20/20/2012</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">http://georgeyk.com.br</col>
-        <col id="1" translatable="yes">ERROR</col>
-        <col id="2" translatable="yes"> </col>
-        <col id="3" translatable="yes">20/20/2012</col>
-      </row>
-    </data>
-  </object>
   <object class="GtkDialog" id="ResourceMonitor">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
@@ -144,6 +118,7 @@
                 <property name="label" translatable="yes">Open</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-open</property>
+                <signal name="clicked" handler="_on_open_button__clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -178,7 +153,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkToolButton" id="toolbutton3">
+              <object class="GtkToolButton" id="stop_button">
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
@@ -256,7 +231,9 @@
                 <property name="enable_grid_lines">horizontal</property>
                 <property name="enable_tree_lines">True</property>
                 <child internal-child="selection">
-                  <object class="GtkTreeSelection" id="treeview-selection"/>
+                  <object class="GtkTreeSelection" id="resource_selection">
+                    <signal name="changed" handler="_on_resource_view__selection_changed" swapped="no"/>
+                  </object>
                 </child>
                 <child>
                   <object class="GtkTreeViewColumn" id="treeviewcolumn1">
@@ -332,23 +309,37 @@
             <property name="position">3</property>
           </packing>
         </child>
-        <child>
-          <object class="GtkStatusbar" id="statusbar">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="orientation">vertical</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">4</property>
-          </packing>
-        </child>
       </object>
     </child>
     <action-widgets>
       <action-widget response="0">close_button</action-widget>
     </action-widgets>
+  </object>
+  <object class="GtkListStore" id="resources_list">
+    <columns>
+      <!-- column-name URI -->
+      <column type="gchararray"/>
+      <!-- column-name Status -->
+      <column type="gchararray"/>
+      <!-- column-name Description -->
+      <column type="gchararray"/>
+      <!-- column-name Last -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">file:///teste/</col>
+        <col id="1" translatable="yes">OK</col>
+        <col id="2" translatable="yes">CHECKED</col>
+        <col id="3" translatable="yes">20/20/2012</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">http://georgeyk.com.br</col>
+        <col id="1" translatable="yes">ERROR</col>
+        <col id="2" translatable="yes"> </col>
+        <col id="3" translatable="yes">20/20/2012</col>
+      </row>
+    </data>
   </object>
   <object class="GtkTreeStore" id="treestore1">
     <columns>
