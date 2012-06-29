@@ -27,6 +27,7 @@ from utils import find_resource
 
 class ResourceDialog(object):
     def __init__(self, manager, parent, resource=None):
+        self._resource = resource
         builder = Gtk.Builder()
         builder.add_from_file(find_resource('ui', 'Resource.glade'))
         builder.connect_signals(self)
@@ -37,10 +38,23 @@ class ResourceDialog(object):
         self.interval_adjustment = builder.get_object('interval_adjustment')
         self.interval.set_value(5)
         self._manager = manager
+        self._update_widgets()
 
     #
     # Private API
     #
+
+    def _update_widgets(self):
+        if self._resource:
+            self.uri_entry.set_text(self._resource.filename)
+            interval = self._resource.interval
+            hour = 60 * 60
+            if interval > hour:
+                interval = interval / hour
+            if interval > 60:
+                interval = interval / 60
+            self.interval.set_value(interval)
+            #TODO: update combo unit
 
     def _read_combo_unit_value(self):
         tree_iter = self.unit_combo.get_active_iter()
@@ -77,8 +91,14 @@ class ResourceDialog(object):
     def _save_resource(self):
         uri = self.uri_entry.get_text()
         interval = self._get_interval_value()
-        resource = Resource(uri, interval)
-        self._manager.add_resource(resource)
+        if self._resource is None:
+            resource = Resource(uri, interval)
+            self._manager.add_resource(resource)
+        else:
+            self._resource.filename = uri
+            self._resource.interval = interval
+            self._manager.edited_resource(self._resource)
+
         # validate & message user
 
     #

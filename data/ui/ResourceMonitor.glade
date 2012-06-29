@@ -60,6 +60,7 @@
                 <property name="label" translatable="yes">Add</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-add</property>
+                <signal name="clicked" handler="_on_add_button__clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -75,6 +76,7 @@
                 <property name="label" translatable="yes">Edit</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-edit</property>
+                <signal name="clicked" handler="_on_edit_button__clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -146,6 +148,7 @@
                 <property name="label" translatable="yes">Start</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-media-play</property>
+                <signal name="clicked" handler="_on_start_button__clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -161,6 +164,7 @@
                 <property name="label" translatable="yes">Stop</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-media-stop</property>
+                <signal name="clicked" handler="_on_stop_button__clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -247,7 +251,7 @@
                     <child>
                       <object class="GtkCellRendererText" id="cellrenderertext1"/>
                       <attributes>
-                        <attribute name="text">0</attribute>
+                        <attribute name="text">1</attribute>
                       </attributes>
                     </child>
                   </object>
@@ -263,7 +267,7 @@
                     <child>
                       <object class="GtkCellRendererText" id="cellrenderertext2"/>
                       <attributes>
-                        <attribute name="text">1</attribute>
+                        <attribute name="text">2</attribute>
                       </attributes>
                     </child>
                   </object>
@@ -279,7 +283,7 @@
                     <child>
                       <object class="GtkCellRendererText" id="cellrenderertext3"/>
                       <attributes>
-                        <attribute name="text">2</attribute>
+                        <attribute name="text">3</attribute>
                       </attributes>
                     </child>
                   </object>
@@ -295,7 +299,7 @@
                     <child>
                       <object class="GtkCellRendererText" id="cellrenderertext4"/>
                       <attributes>
-                        <attribute name="text">3</attribute>
+                        <attribute name="text">4</attribute>
                       </attributes>
                     </child>
                   </object>
@@ -317,6 +321,8 @@
   </object>
   <object class="GtkListStore" id="resources_list">
     <columns>
+      <!-- column-name ID -->
+      <column type="gchararray"/>
       <!-- column-name URI -->
       <column type="gchararray"/>
       <!-- column-name Status -->
@@ -324,32 +330,6 @@
       <!-- column-name Description -->
       <column type="gchararray"/>
       <!-- column-name Last -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">file:///teste/</col>
-        <col id="1" translatable="yes">OK</col>
-        <col id="2" translatable="yes">CHECKED</col>
-        <col id="3" translatable="yes">20/20/2012</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">http://georgeyk.com.br</col>
-        <col id="1" translatable="yes">ERROR</col>
-        <col id="2" translatable="yes"> </col>
-        <col id="3" translatable="yes">20/20/2012</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkTreeStore" id="treestore1">
-    <columns>
-      <!-- column-name uri -->
-      <column type="gchararray"/>
-      <!-- column-name status_code -->
-      <column type="gchararray"/>
-      <!-- column-name status_description -->
-      <column type="gchararray"/>
-      <!-- column-name last_checked -->
       <column type="gchararray"/>
     </columns>
   </object>

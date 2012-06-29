@@ -28,7 +28,7 @@ from gi._glib import GError
 
 _open_dialogs = []
 
-def run_app_dialog(klass, parent, manager=None):
+def run_app_dialog(klass, parent, manager=None, **kwargs):
     # I'm pretty sure that might be 'right' way to prevent the user open
     # multiple dialogs. 
     global _open_dialogs
@@ -38,7 +38,7 @@ def run_app_dialog(klass, parent, manager=None):
         return
     _open_dialogs.append(name)
 
-    dialog = klass(parent=parent, manager=manager)
+    dialog = klass(parent=parent, manager=manager, **kwargs)
     retval = dialog.run()
     dialog.destroy()
     _open_dialogs.remove(name)

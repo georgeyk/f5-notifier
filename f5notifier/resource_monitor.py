@@ -21,7 +21,8 @@
 
 from gi.repository import Gtk
 
-from utils import yesno, find_resource, open_file
+from resource import ResourceDialog
+from utils import yesno, find_resource, open_file, run_app_dialog
 
 
 class ResourceMonitor(object):
@@ -38,7 +39,18 @@ class ResourceMonitor(object):
         self.start_button = builder.get_object('start_button')
         self.stop_button = builder.get_object('stop_button')
         self.resource_selection = builder.get_object('resource_selection')
+        self.resources_list = builder.get_object('resources_list')
+
+        manager.connect('added', self._on_resource__added)
+        manager.connect('edited', self._on_resource__edited)
+        manager.connect('removed', self._on_resource__removed)
+        manager.connect('started', self._on_resource__started)
+        manager.connect('stopped', self._on_resource__stopped)
+        manager.connect('resource-checked', self._on_resource__checked)
+        self._manager = manager
+
         self._update_widgets()
+        self._load_data()
 
     #
     # Private API
@@ -50,6 +62,47 @@ class ResourceMonitor(object):
                                     self.stop_button]
         for button in needs_selection_buttons:
             button.set_sensitive(bool(selected))
+
+    def _load_data(self):
+        for resource in self._manager.resources:
+            self._add_resoure(resource)
+
+    def _find_iter_for_resource(self, resource):
+        list_iter = self.resources_list.get_iter_first()
+        while True:
+            if not list_iter:
+                break
+
+            resource_id = self.resources_list.get_value(list_iter, 0)
+            if resource_id == resource.key:
+                return list_iter
+
+            list_iter = self.resources_list.iter_next(list_iter)
+
+    def _add_resoure(self, resource):
+        list_iter = self._find_iter_for_resource(resource)
+        if list_iter is None:
+            self.resources_list.append([resource.key,
+                                        resource.filename,
+                                        str(resource.status_code),
+                                        resource.status_description,
+                                        resource.last_checked])
+
+    def _remove_resource(self, resource):
+        list_iter = self._find_iter_for_resource(resource)
+        if list_iter:
+            self.resources_list.remove(list_iter)
+
+    def _update_resource(self, resource):
+        list_iter = self._find_iter_for_resource(resource)
+        if list_iter:
+            self.resources_list.set_value(list_iter, 1, resource.filename)
+            self.resources_list.set_value(list_iter, 2,
+                                          str(resource.status_code))
+            self.resources_list.set_value(list_iter, 3,
+                                          resource.status_description)
+            self.resources_list.set_value(list_iter, 4,
+                                          resource.last_checked)
 
     #
     # Public API
@@ -65,28 +118,78 @@ class ResourceMonitor(object):
     # Callbacks
     #
 
-    def _on_open_button__clicked(self, widget):
-        selection, tree_iter = self.resource_selection.get_selected()
+    def _on_add_button__clicked(self, widget):
+        parent = widget.get_parent().get_parent()
+        run_app_dialog(ResourceDialog, parent, self._manager)
+
+    def _on_edit_button__clicked(self, widget):
+        parent = widget.get_parent().get_parent()
+        model, tree_iter = self.resource_selection.get_selected()
         if tree_iter:
-            selected = selection[tree_iter][0]
-            #XXX: it seems that setting the parent fixes the 'operation not
-            # permitted' exception. I really don't know why, since it its not
-            # used by open_file in case of success. :S annoying
-            open_file(selected, parent=self._parent)
+            key = model[tree_iter][0]
+            resource = self._manager.get_resource_by_key(key)
+        else:
+            resource = None
+
+        run_app_dialog(ResourceDialog, parent, self._manager,
+                       resource=resource)
 
     def _on_remove_button__clicked(self, widget):
         retval = yesno('Remove Resource',
                     'Are you sure you want to remove the selected resource ?',
                      parent=self._parent)
         if retval == Gtk.ResponseType.YES:
-            pass
-            # get resource and remove it
+            model, tree_iter = self.resource_selection.get_selected()
+            if tree_iter:
+                key = model[tree_iter][0]
+                resource = self._manager.get_resource_by_key(key)
+                self._manager.remove_resource(resource)
+
+    def _on_open_button__clicked(self, widget):
+        selection, tree_iter = self.resource_selection.get_selected()
+        if tree_iter:
+            selected = selection[tree_iter][1]
+            #XXX: it seems that setting the parent fixes the 'operation not
+            # permitted' exception. I really don't know why, since it its not
+            # used by open_file in case of success. :S annoying
+            open_file(selected, parent=self._parent)
+
+    def _on_start_button__clicked(self, widget):
+        model, tree_iter = self.resource_selection.get_selected()
+        if tree_iter:
+            key = model[tree_iter][0]
+            resource = self._manager.get_resource_by_key(key)
+            self._manager.start_resource(resource)
+
+    def _on_stop_button__clicked(self, widget):
+        model, tree_iter = self.resource_selection.get_selected()
+        if tree_iter:
+            key = model[tree_iter][0]
+            resource = self._manager.get_resource_by_key(key)
+            self._manager.stop_resource(resource)
 
     def _on_resource_view__selection_changed(self, selection):
         model, tree_iter = selection.get_selected()
         if tree_iter:
-            selected = model[tree_iter][0]
+            selected = model[tree_iter][1]
         else:
             selected = None
-
         self._update_widgets(selected)
+
+    def _on_resource__added(self, manager, resource):
+        self._add_resoure(resource)
+
+    def _on_resource__edited(self, manager, resource):
+        self._update_resource(resource)
+
+    def _on_resource__removed(self, manager, resource):
+        self._remove_resource(resource)
+
+    def _on_resource__started(self, manager, resource):
+        self._update_resource(resource)
+
+    def _on_resource__stopped(self, manager, resource):
+        self._update_resource(resource)
+
+    def _on_resource__checked(self, manager, resource):
+        self._update_resource(resource)

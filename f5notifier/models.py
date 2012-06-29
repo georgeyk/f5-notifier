@@ -22,6 +22,7 @@
 import datetime
 import hashlib
 import urllib2
+import random
 
 from gi.repository import GObject, GLib
 
@@ -39,7 +40,8 @@ class Resource(GObject.GObject):
 
     def __init__(self, filename, interval):
         GObject.GObject.__init__(self)
-
+        # just a placeholder
+        self.key = str(random.randint(1, 1000))
         self.filename = filename
         self.interval = interval
         self.hash_value = ''
@@ -51,8 +53,9 @@ class Resource(GObject.GObject):
         self.source_id = None
 
     def __str__(self):
-        return '<Resource: %s - %s: %s>' % (self.filename, self.status_code,
-                                            self.status_description)
+        return '<Resource %s: %s - %s: %s>' % (self.key, self.filename,
+                                               self.status_code,
+                                               self.status_description)
 
     #
     # Private API
@@ -69,7 +72,7 @@ class Resource(GObject.GObject):
     def _open_resource(self):
         try:
             resource = urllib2.urlopen(self.filename)
-            self.last_checked = datetime.datetime.now()
+            self.last_checked = datetime.datetime.now().strftime('%x')
         except (urllib2.URLError, urllib2.HTTPError), e:
             self.status_code = e.errno
             if not e.errno and hasattr(e, 'code'):
@@ -135,7 +138,10 @@ class Resource(GObject.GObject):
                                                       self.check_change)
 
     def stop(self):
-        self.running_status = Resource.STATUS_STOPPED
+        if self.source_id:
+            self.running_status = Resource.STATUS_STOPPED
+            if GLib.source_remove(self.source_id):
+                self.source_id = None
 
 
 class ResourceManager(GObject.GObject):
@@ -156,15 +162,18 @@ class ResourceManager(GObject.GObject):
     # Public API
     #
 
+    def get_resource_by_key(self, key):
+        # placeholder, until we set a database backend
+        for resource in self.resources:
+            if resource.key == key:
+                return resource
+
     def add_resource(self, resource):
-        # TODO: connect signals/callbacks
         if resource not in self.resources:
             resource.connect('checked', self._on_resource__checked)
             self.resources.append(resource)
             resource.start()
             self.emit('added', resource)
-        else:
-            print 'resource already added'
 
     def remove_resource(self, resource):
         if resource in self.resources:
@@ -174,6 +183,11 @@ class ResourceManager(GObject.GObject):
 
     def edited_resource(self, resource):
         if resource in self.resources:
+            i = self.resources.index(resource)
+            self.resources.remove(resource)
+            resource.stop()
+            resource.start()
+            self.resources.insert(i, resource)
             self.emit('edited', resource)
 
     def start_resource(self, resource):
@@ -191,5 +205,4 @@ class ResourceManager(GObject.GObject):
     #
 
     def _on_resource__checked(self, resource):
-        print resource
         self.emit('resource-checked', resource)
