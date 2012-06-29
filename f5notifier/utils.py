@@ -26,6 +26,25 @@ from gi.repository import Gtk
 from gi._glib import GError
 
 
+_open_dialogs = []
+
+def run_app_dialog(klass, parent, manager=None):
+    # I'm pretty sure that might be 'right' way to prevent the user open
+    # multiple dialogs. 
+    global _open_dialogs
+
+    name = klass.__name__
+    if name in _open_dialogs:
+        return
+    _open_dialogs.append(name)
+
+    dialog = klass(parent=parent, manager=manager)
+    retval = dialog.run()
+    dialog.destroy()
+    _open_dialogs.remove(name)
+
+    return retval
+
 def warn_user(title, message, parent=None):
     dialog = Gtk.MessageDialog(parent, 0, Gtk.MessageType.WARNING,
                                Gtk.ButtonsType.OK, title)

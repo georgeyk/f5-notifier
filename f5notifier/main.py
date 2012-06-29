@@ -31,7 +31,7 @@ from about import get_about_dialog
 from resource import ResourceDialog
 from resource_monitor import ResourceMonitor
 from settings import SettingsDialog
-from utils import find_resources_dir
+from utils import find_resources_dir, run_app_dialog
 
 
 class F5Notifier(object):
@@ -98,20 +98,6 @@ class F5Notifier(object):
         menu.append(quit)
         return menu
 
-    def _run_dialog(self, dialog_klass, parent):
-        # I'm pretty sure that might be 'right' way to prevent the user open
-        # multiple dialogs.
-        # Move this to a utility function
-        name = dialog_klass.__name__
-        if hasattr(self, name):
-            return
-
-        dialog = dialog_klass(self._manager, parent)
-        setattr(self, name, dialog)
-        dialog.run()
-        dialog.destroy()
-        delattr(self, name)
-
     #
     # Public API
     #
@@ -125,19 +111,19 @@ class F5Notifier(object):
 
     def _on_add_resource__activated(self, widget):
         parent = widget.get_parent().get_parent()
-        self._run_dialog(ResourceDialog, parent)
+        run_app_dialog(ResourceDialog, parent, self._manager)
 
     def _on_monitor__activated(self, widget):
         parent = widget.get_parent().get_parent()
-        self._run_dialog(ResourceMonitor, parent)
+        run_app_dialog(ResourceMonitor, parent, self._manager)
 
     def _on_settings__activated(self, widget):
         parent = widget.get_parent().get_parent()
-        self._run_dialog(SettingsDialog, parent)
+        run_app_dialog(SettingsDialog, parent, self._manager)
 
     def _on_about__activated(self, widget):
         parent = widget.get_parent().get_parent()
-        self._run_dialog(get_about_dialog, parent)
+        run_app_dialog(get_about_dialog, parent)
 
     def _on_quit__activated(self, widget):
         Gtk.main_quit()
