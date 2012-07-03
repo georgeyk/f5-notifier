@@ -26,7 +26,7 @@ from utils import find_resource
 
 def get_about_dialog(manager, parent):
     logo = Gtk.Image()
-    logo_path = find_resource('images', 'logo-64.png')
+    logo_path = find_resource('images', 'about.png')
     if logo_path:
         logo.set_from_file(logo_path)
     else:

@@ -8,7 +8,7 @@
     <property name="default_width">620</property>
     <property name="default_height">560</property>
     <property name="destroy_with_parent">True</property>
-    <property name="icon_name">f5notifier</property>
+    <property name="icon_name">../images/f5notifier.svg</property>
     <property name="type_hint">dialog</property>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox1">

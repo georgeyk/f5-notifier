@@ -24,7 +24,9 @@ import hashlib
 import urllib2
 import random
 
+from notification import send_message
 from gi.repository import GObject, GLib
+#import pynotify
 
 
 #TODO: this should be splitted in two parts, one that really is a model and
@@ -72,7 +74,7 @@ class Resource(GObject.GObject):
     def _open_resource(self):
         try:
             resource = urllib2.urlopen(self.filename)
-            self.last_checked = datetime.datetime.now().strftime('%x')
+            self.last_checked = datetime.datetime.now().strftime('%x %X')
         except (urllib2.URLError, urllib2.HTTPError), e:
             self.status_code = e.errno
             if not e.errno and hasattr(e, 'code'):
@@ -125,6 +127,7 @@ class Resource(GObject.GObject):
             self.hash_value = hash_value
             self.status_description = 'CHANGED'
             self.source_id = None
+            send_message(self.status_description, self.filename)
             self.emit('checked')
             return False
 

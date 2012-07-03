@@ -31,7 +31,7 @@ from about import get_about_dialog
 from resource import ResourceDialog
 from resource_monitor import ResourceMonitor
 from settings import SettingsDialog
-from utils import find_resources_dir, run_app_dialog
+from utils import find_resource, find_resources_dir, run_app_dialog
 
 
 class F5Notifier(object):
@@ -41,11 +41,11 @@ class F5Notifier(object):
                 'f5-notifier', 'indicator-messages-new',
                 appindicator.IndicatorCategory.APPLICATION_STATUS)
         self.indicator.set_status(appindicator.IndicatorStatus.ACTIVE)
-        self.indicator.set_attention_icon('indicator-messages-new')
         images_dir = find_resources_dir('images')
         if images_dir:
             self.indicator.set_icon_theme_path(images_dir)
             self.indicator.set_icon('f5notifier')
+            self.indicator.set_attention_icon('f5notifier-attention')
 
         menu = self._build_menu()
         self.indicator.set_menu(menu)
@@ -63,7 +63,10 @@ class F5Notifier(object):
         add_resource.connect('activate', self._on_add_resource__activated)
         add_resource.show()
 
-        monitor = Gtk.ImageMenuItem.new_from_stock(Gtk.STOCK_ZOOM_IN, None)
+        monitor_image = Gtk.Image.new_from_file(
+                find_resource('images', 'f5notifier.svg'))
+        monitor = Gtk.ImageMenuItem.new_with_label('Monitor')
+        monitor.set_image(monitor_image)
         monitor.set_always_show_image(True)
         menu.append(monitor)
         monitor.connect('activate', self._on_monitor__activated)
