@@ -63,6 +63,10 @@ class ResourceMonitor(object):
         for button in needs_selection_buttons:
             button.set_sensitive(bool(selected))
 
+        if selected:
+            self.start_button.set_sensitive(selected.can_start())
+            self.stop_button.set_sensitive(selected.can_stop())
+
     def _load_data(self):
         for resource in self._manager.resources:
             self._add_resoure(resource)
@@ -78,6 +82,12 @@ class ResourceMonitor(object):
                 return list_iter
 
             list_iter = self.resources_list.iter_next(list_iter)
+
+    def _get_current_selected(self):
+        model, tree_iter = self.resource_selection.get_selected()
+        if tree_iter:
+            key = model[tree_iter][0]
+            return self._manager.get_resource_by_key(key)
 
     def _add_resoure(self, resource):
         list_iter = self._find_iter_for_resource(resource)
@@ -124,25 +134,18 @@ class ResourceMonitor(object):
 
     def _on_edit_button__clicked(self, widget):
         parent = widget.get_parent().get_parent()
-        model, tree_iter = self.resource_selection.get_selected()
-        if tree_iter:
-            key = model[tree_iter][0]
-            resource = self._manager.get_resource_by_key(key)
-        else:
-            resource = None
-
-        run_app_dialog(ResourceDialog, parent, self._manager,
-                       resource=resource)
+        resource = self._get_current_selected()
+        if resource:
+            run_app_dialog(ResourceDialog, parent, self._manager,
+                           resource=resource)
 
     def _on_remove_button__clicked(self, widget):
         retval = yesno('Remove Resource',
                     'Are you sure you want to remove the selected resource ?',
                      parent=self._parent)
         if retval == Gtk.ResponseType.YES:
-            model, tree_iter = self.resource_selection.get_selected()
-            if tree_iter:
-                key = model[tree_iter][0]
-                resource = self._manager.get_resource_by_key(key)
+            resource = self._get_current_selected()
+            if resource:
                 self._manager.remove_resource(resource)
 
     def _on_open_button__clicked(self, widget):
@@ -155,26 +158,20 @@ class ResourceMonitor(object):
             open_file(selected, parent=self._parent)
 
     def _on_start_button__clicked(self, widget):
-        model, tree_iter = self.resource_selection.get_selected()
-        if tree_iter:
-            key = model[tree_iter][0]
-            resource = self._manager.get_resource_by_key(key)
+        resource = self._get_current_selected()
+        if resource:
             self._manager.start_resource(resource)
+            self._update_widgets(resource)
 
     def _on_stop_button__clicked(self, widget):
-        model, tree_iter = self.resource_selection.get_selected()
-        if tree_iter:
-            key = model[tree_iter][0]
-            resource = self._manager.get_resource_by_key(key)
+        resource = self._get_current_selected()
+        if resource:
             self._manager.stop_resource(resource)
+            self._update_widgets(resource)
 
     def _on_resource_view__selection_changed(self, selection):
-        model, tree_iter = selection.get_selected()
-        if tree_iter:
-            selected = model[tree_iter][1]
-        else:
-            selected = None
-        self._update_widgets(selected)
+        resource = self._get_current_selected()
+        self._update_widgets(resource)
 
     def _on_resource__added(self, manager, resource):
         self._add_resoure(resource)
@@ -193,3 +190,6 @@ class ResourceMonitor(object):
 
     def _on_resource__checked(self, manager, resource):
         self._update_resource(resource)
+
+    def _on_resource_row__activated(self, treeview, tree_iter, column):
+        self._on_edit_button__clicked(self.edit_button)

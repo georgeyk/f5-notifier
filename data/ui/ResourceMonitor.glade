@@ -234,6 +234,7 @@
                 <property name="search_column">0</property>
                 <property name="enable_grid_lines">horizontal</property>
                 <property name="enable_tree_lines">True</property>
+                <signal name="row-activated" handler="_on_resource_row__activated" swapped="no"/>
                 <child internal-child="selection">
                   <object class="GtkTreeSelection" id="resource_selection">
                     <signal name="changed" handler="_on_resource_view__selection_changed" swapped="no"/>

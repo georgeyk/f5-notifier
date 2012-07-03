@@ -50,6 +50,7 @@ class F5Notifier(object):
         menu = self._build_menu()
         self.indicator.set_menu(menu)
         self._manager = ResourceManager()
+        self._manager.connect('resource-checked', self._on_resource__checked)
 
     #
     # Private API
@@ -111,6 +112,11 @@ class F5Notifier(object):
     #
     # Callbacks
     #
+
+    def _on_resource__checked(self, manager, resource):
+        #TODO: improve this
+        if manager.has_resource_change():
+            self.indicator.set_status(appindicator.IndicatorStatus.ATTENTION)
 
     def _on_add_resource__activated(self, widget):
         parent = widget.get_parent().get_parent()

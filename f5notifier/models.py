@@ -38,7 +38,8 @@ class Resource(GObject.GObject):
     }
 
     (STATUS_STARTED,
-     STATUS_STOPPED) = range(2)
+     STATUS_STOPPED,
+     STATUS_ERROR) = range(3)
 
     def __init__(self, filename, interval):
         GObject.GObject.__init__(self)
@@ -73,8 +74,8 @@ class Resource(GObject.GObject):
 
     def _open_resource(self):
         try:
-            resource = urllib2.urlopen(self.filename)
             self.last_checked = datetime.datetime.now().strftime('%x %X')
+            resource = urllib2.urlopen(self.filename)
         except (urllib2.URLError, urllib2.HTTPError), e:
             self.status_code = e.errno
             if not e.errno and hasattr(e, 'code'):
@@ -126,6 +127,7 @@ class Resource(GObject.GObject):
         else:
             self.hash_value = hash_value
             self.status_description = 'CHANGED'
+            self.running_status = Resource.STATUS_STOPPED
             self.source_id = None
             send_message(self.status_description, self.filename)
             self.emit('checked')
@@ -134,17 +136,26 @@ class Resource(GObject.GObject):
         self.emit('checked')
         return True
 
+    def can_start(self):
+        return self.running_status != Resource.STATUS_STARTED
+
     def start(self):
-        if self.source_id is None:
+        if self.can_start():
             self.running_status = Resource.STATUS_STARTED
             self.source_id = GLib.timeout_add_seconds(self.interval,
                                                       self.check_change)
 
+    def can_stop(self):
+        return self.running_status != Resource.STATUS_STOPPED
+
     def stop(self):
-        if self.source_id:
+        if self.source_id and self.can_stop():
             self.running_status = Resource.STATUS_STOPPED
             if GLib.source_remove(self.source_id):
                 self.source_id = None
+
+    def has_changed(self):
+        return self.status_description == 'CHANGED'
 
 
 class ResourceManager(GObject.GObject):
@@ -202,6 +213,9 @@ class ResourceManager(GObject.GObject):
         if resource in self.resources:
             resource.stop()
             self.emit('stopped', resource)
+
+    def has_resource_change(self):
+        return any([r.has_changed() for r in self.resources])
 
     #
     # Callbacks

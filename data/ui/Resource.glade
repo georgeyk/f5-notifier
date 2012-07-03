@@ -108,6 +108,7 @@
                 <property name="can_focus">True</property>
                 <property name="hexpand">True</property>
                 <property name="invisible_char">•</property>
+                <signal name="activate" handler="_on_uri_entry__activate" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">1</property>

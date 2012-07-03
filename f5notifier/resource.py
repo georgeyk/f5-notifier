@@ -124,3 +124,8 @@ class ResourceDialog(object):
 
     def _on_unit_combo__changed(self, widget):
         self._update_adjustment(self._read_combo_unit_value())
+
+    def _on_uri_entry__activate(self, widget):
+        if widget.get_text():
+            self._save_resource()
+            self.destroy()
