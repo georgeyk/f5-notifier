@@ -27,6 +27,6 @@ override_dh_install:
 	grep -RlZ 'import gettext' debian/f5-notifier/* | xargs -0 -r sed -i 's|\(import\) gettext$$|\1 locale|'
 	grep -RlZ 'from gettext import gettext as _' debian/f5-notifier/* | xargs -0 -r sed -i 's|from gettext \(import gettext as _\)|from locale \1|'
 	grep -RlZ "gettext.textdomain('f5-notifier')" debian/f5-notifier/* | xargs -0 -r sed -i "s|gettext\(\.textdomain('f5-notifier')\)|locale\.bindtextdomain('f5-notifier', '/opt/extras.ubuntu.com/f5-notifier/share/locale')\nlocale\1|" 
-	sed -i "s|__f5notifier_data_directory__ =.*|__f5notifier_data_directory__ = '/opt/extras.ubuntu.com/f5-notifier/share/f5-notifier/'|" debian/f5-notifier/opt/extras.ubuntu.com/f5-notifier/f5notifier*/f5_notifierconfig.py
+	sed -i "s|__f5_notifier_data_directory__ =.*|__f5_notifier_data_directory__ = '/opt/extras.ubuntu.com/f5-notifier/share/f5-notifier/'|" debian/f5-notifier/opt/extras.ubuntu.com/f5-notifier/f5notifier*/f5_notifierconfig.py
 	sed -i 's|        sys.path.insert(0, opt_path)|\0\n    os.putenv("XDG_DATA_DIRS", "%s:%s" % ("/opt/extras.ubuntu.com/f5-notifier/share/", os.getenv("XDG_DATA_DIRS", "")))|' debian/f5-notifier/opt/extras.ubuntu.com/f5-notifier/bin/f5-notifier
 	if [ -d debian/f5-notifier/opt/extras.ubuntu.com/f5-notifier/share/glib-2.0/schemas ]; then glib-compile-schemas debian/f5-notifier/opt/extras.ubuntu.com/f5-notifier/share/glib-2.0/schemas; fi
