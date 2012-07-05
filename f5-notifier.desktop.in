@@ -1,0 +1,8 @@
+[Desktop Entry]
+_Name=F5 Notifier
+_Comment=F5Notifier application
+Categories=GNOME;Utility;
+Exec=f5-notifier
+Icon=/usr/share/f5-notifier/media/f5-notifier.svg
+Terminal=false
+Type=Application

@@ -73,7 +73,7 @@ def open_file(uri, show_dialog=True, parent=None):
     return retval
 
 def find_resources_dir(resource_type):
-    data_dir = os.path.realpath('../data')
+    data_dir = os.path.realpath(__file__ + '/../data')
     directory = data_dir + '/' + resource_type
     if os.path.isdir(directory):
         return directory

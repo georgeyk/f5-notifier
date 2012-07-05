@@ -64,14 +64,15 @@ class F5Notifier(object):
         add_resource.connect('activate', self._on_add_resource__activated)
         add_resource.show()
 
-        monitor_image = Gtk.Image.new_from_file(
-                find_resource('images', 'f5notifier.svg'))
-        monitor = Gtk.ImageMenuItem.new_with_label('Monitor')
-        monitor.set_image(monitor_image)
-        monitor.set_always_show_image(True)
-        menu.append(monitor)
-        monitor.connect('activate', self._on_monitor__activated)
-        monitor.show()
+        image_path = find_resource('images', 'f5notifier.svg')
+        if image_path:
+            monitor_image = Gtk.Image.new_from_file(image_path)
+            monitor = Gtk.ImageMenuItem.new_with_label('Monitor')
+            monitor.set_image(monitor_image)
+            monitor.set_always_show_image(True)
+            menu.append(monitor)
+            monitor.connect('activate', self._on_monitor__activated)
+            monitor.show()
 
         sep1 = Gtk.SeparatorMenuItem()
         menu.append(sep1)

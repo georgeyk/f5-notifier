@@ -1,0 +1,22 @@
+Source: f5-notifier
+Section: python
+Priority: extra
+Build-Depends: debhelper (>= 6),
+ python (>= 2.6.6-3~),
+ python-distutils-extra (>= 2.10)
+Maintainer: George Y. Kussumoto <contato@georgeyk.com.br>
+Standards-Version: 3.9.3
+XS-Python-Version: current
+
+Package: f5-notifier
+Architecture: all
+XB-Python-Version: ${python:Versions}
+Depends: ${misc:Depends},
+ ${python:Depends},
+ gir1.2-glib-2.0,
+ gir1.2-gtk-3.0,
+ gir1.2-notify-0.7,
+ python-gi,
+ gir1.2-appindicator3-0.1
+Description: F5 Notifier
+ TODO A BETTER DESCRIPTION HERE

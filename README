@@ -1,0 +1,10 @@
+TODO
+
+
+Development Notes
+==================
+
+Quickly[quickly] was used to generate setup.py, the debian/ folder and some
+related files for packaging purposes.
+
+[quickly] : http://developer.ubuntu.com/resources/tools/quickly/
