@@ -25,12 +25,14 @@ import time
 from gi.repository import Gtk, Gdk
 from gi._glib import GError
 
+from f5_notifierconfig import get_data_file
+
 
 _open_dialogs = []
 
 def run_app_dialog(klass, parent, manager=None, **kwargs):
     # I'm pretty sure that might be 'right' way to prevent the user open
-    # multiple dialogs. 
+    # multiple dialogs.
     global _open_dialogs
 
     name = klass.__name__
@@ -73,8 +75,10 @@ def open_file(uri, show_dialog=True, parent=None):
     return retval
 
 def find_resources_dir(resource_type):
-    data_dir = os.path.realpath(__file__ + '/../data')
+    data_dir = os.path.realpath(__file__ + '/../../data/')
+    #data_dir = os.path.realpath(root_dir + '/share/f5-notifier/')
     directory = data_dir + '/' + resource_type
+    #directory = get_data_file(resource_type)
     if os.path.isdir(directory):
         return directory
 

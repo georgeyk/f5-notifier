@@ -1,32 +1,35 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# vi:si:et:sw=4:sts=4:ts=4
+#!/usr/bin/python
+# -*- Mode: Python; coding: utf-8; indent-tabs-mode: nil; tab-width: 4 -*-
+### BEGIN LICENSE
+# This file is in the public domain
+### END LICENSE
 
-##
-## Copyright (C) 2012 - George Y. Kussumoto <georgeyk.dev@gmail.com>
-##
-## This program is free software: you can redistribute it and/or modify
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation, either version 3 of the License, or
-## (at your option) any later version.
-##
-## This program is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-## GNU General Public License for more details.
-##
-## You should have received a copy of the GNU General Public License
-## along with this program.  If not, see <http://www.gnu.org/licenses/>.
-##
-##
+import sys
+import os
+
+import gettext
+from gettext import gettext as _
+gettext.textdomain('f5-notifier')
+
+# Add project root directory (enable symlink and trunk execution)
+PROJECT_ROOT_DIRECTORY = os.path.abspath(
+    os.path.dirname(os.path.dirname(os.path.realpath(sys.argv[0]))))
+
+python_path = []
+if os.path.abspath(__file__).startswith('/opt'):
+    syspath = sys.path[:] # copy to avoid infinite loop in pending objects
+    for path in syspath:
+        opt_path = path.replace('/usr', '/opt/extras.ubuntu.com/f5-notifier')
+        python_path.insert(0, opt_path)
+        sys.path.insert(0, opt_path)
+if (os.path.exists(os.path.join(PROJECT_ROOT_DIRECTORY, 'f5notifier'))
+    and PROJECT_ROOT_DIRECTORY not in sys.path):
+    python_path.insert(0, PROJECT_ROOT_DIRECTORY)
+    sys.path.insert(0, PROJECT_ROOT_DIRECTORY)
+
+if python_path:
+    os.putenv('PYTHONPATH', "%s:%s" % (os.getenv('PYTHONPATH', ''), ':'.join(python_path))) # for subprocesses
 
 from f5notifier.main import F5Notifier
-
-
-def main():
-    program = F5Notifier()
-    program.main()
-
-
-if __name__ == '__main__':
-    main()
+app = F5Notifier()
+app.main()

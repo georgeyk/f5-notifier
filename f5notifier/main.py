@@ -19,9 +19,9 @@
 ##
 ##
 
-#from gettext import gettext as _
-#import gettext
-#gettext.textdomain('f5-notifier')
+from gettext import gettext as _
+import gettext
+gettext.textdomain('f5-notifier')
 
 from gi.repository import AppIndicator3 as appindicator
 from gi.repository import Gtk
