@@ -3,7 +3,8 @@ Section: python
 Priority: extra
 Build-Depends: debhelper (>= 6),
  python (>= 2.6.6-3~),
- python-distutils-extra (>= 2.10)
+ python-distutils-extra (>= 2.10),
+ libglib2.0-bin
 Maintainer: George Y. Kussumoto <contato@georgeyk.com.br>
 Standards-Version: 3.9.3
 XS-Python-Version: current
