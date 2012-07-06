@@ -26,9 +26,9 @@ from utils import find_resource
 
 def get_about_dialog(manager, parent):
     logo = Gtk.Image()
-    logo_path = find_resource('images', 'about.png')
-    if logo_path:
-        logo.set_from_file(logo_path)
+    icon_path = find_resource('images', 'f5notifier.svg')
+    if icon_path:
+        logo.set_from_file(icon_path)
     else:
         logo = None
 
@@ -37,12 +37,13 @@ def get_about_dialog(manager, parent):
                              copyright='2012 © George Kussumoto',
                              website='https://launchpad.net/f5-notifier',
                              website_label='F5 Notifier Homepage',
-                             icon_name='gtk-about',
                              license_type=Gtk.License.GPL_3_0,
                              authors=['George Kussumoto'],
                              flags=Gtk.DialogFlags.DESTROY_WITH_PARENT,
                              parent=parent)
     dialog.set_transient_for(parent)
+    if icon_path:
+        dialog.set_icon_from_file(icon_path)
     if logo:
         dialog.set_logo(logo.get_pixbuf())
 

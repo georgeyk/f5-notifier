@@ -32,6 +32,9 @@ class ResourceDialog(object):
         builder.add_from_file(find_resource('ui', 'Resource.glade'))
         builder.connect_signals(self)
         self.window = builder.get_object('Resource')
+        icon_file = find_resource('images', 'f5-notifier.svg')
+        if icon_file:
+            self.window.set_icon_from_file(icon_file)
         self.uri_entry = builder.get_object('uri_entry')
         self.unit_combo = builder.get_object('unit_combo')
         self.interval = builder.get_object('interval')

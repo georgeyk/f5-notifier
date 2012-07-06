@@ -32,6 +32,9 @@ class ResourceMonitor(object):
         builder.add_from_file(find_resource('ui', 'ResourceMonitor.glade'))
         builder.connect_signals(self)
         self.window = builder.get_object('ResourceMonitor')
+        icon_file = find_resource('images', 'f5-notifier.svg')
+        if icon_file:
+            self.window.set_icon_from_file(icon_file)
         self.add_button = builder.get_object('add_button')
         self.edit_button = builder.get_object('edit_button')
         self.remove_button = builder.get_object('remove_button')

@@ -8,7 +8,7 @@
     <property name="default_width">620</property>
     <property name="default_height">560</property>
     <property name="destroy_with_parent">True</property>
-    <property name="icon_name">../images/f5notifier.svg</property>
+    <property name="icon">../images/f5notifier.svg</property>
     <property name="type_hint">dialog</property>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox1">
@@ -201,7 +201,6 @@
                 <property name="can_focus">True</property>
                 <property name="invisible_char">•</property>
                 <property name="invisible_char_set">True</property>
-                <signal name="changed" handler="_on_filter_entry__changed" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>
