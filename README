@@ -8,3 +8,16 @@ Quickly[quickly] was used to generate setup.py, the debian/ folder and some
 related files for packaging purposes.
 
 [quickly] : http://developer.ubuntu.com/resources/tools/quickly/
+
+
+Packaging / Building
+--------------------
+$ cd f5-notifier/
+$ debuild -S -i -I
+(sign the package)
+$ cd ..
+$ dput ppa:georgeyk/f5-notifier-daily f5-notifier_V_source.changes
+(V is the version package, also, update ppa name)
+
+
+
