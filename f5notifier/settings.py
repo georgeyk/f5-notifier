@@ -21,7 +21,7 @@
 
 from gi.repository import Gtk
 
-from utils import find_resource
+from f5notifier.utils import find_resource
 
 
 class SettingsDialog(object):

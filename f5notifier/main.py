@@ -26,12 +26,12 @@ gettext.textdomain('f5-notifier')
 from gi.repository import AppIndicator3 as appindicator
 from gi.repository import Gtk
 
-from models import ResourceManager
-from about import get_about_dialog
-from resource import ResourceDialog
-from resource_monitor import ResourceMonitor
-from settings import SettingsDialog
-from utils import find_resource, find_resources_dir, run_app_dialog
+from f5notifier.models import ResourceManager
+from f5notifier.about import get_about_dialog
+from f5notifier.resource import ResourceDialog
+from f5notifier.resource_monitor import ResourceMonitor
+from f5notifier.settings import SettingsDialog
+from f5notifier.utils import find_resource, find_resources_dir, run_app_dialog
 
 
 class F5Notifier(object):
@@ -137,10 +137,3 @@ class F5Notifier(object):
 
     def _on_quit__activated(self, widget):
         Gtk.main_quit()
-
-
-# testing
-
-if __name__ == '__main__':
-    f5 = F5Notifier()
-    f5.main()

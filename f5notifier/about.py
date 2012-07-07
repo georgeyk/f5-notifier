@@ -21,7 +21,8 @@
 
 from gi.repository import Gtk
 
-from utils import find_resource
+import f5notifier
+from f5notifier.utils import find_resource
 
 
 def get_about_dialog(manager, parent):
@@ -32,13 +33,13 @@ def get_about_dialog(manager, parent):
     else:
         logo = None
 
-    dialog = Gtk.AboutDialog(program_name='F5 Notifier',
-                             version='0.1',
-                             copyright='2012 © George Kussumoto',
-                             website='https://launchpad.net/f5-notifier',
+    dialog = Gtk.AboutDialog(program_name=f5notifier.PROGRAM_NAME,
+                             version=f5notifier.VERSION,
+                             copyright=f5notifier.COPYRIGHT,
+                             website=f5notifier.WEBSITE,
                              website_label='F5 Notifier Homepage',
                              license_type=Gtk.License.GPL_3_0,
-                             authors=['George Kussumoto'],
+                             authors=f5notifier.AUTHORS,
                              flags=Gtk.DialogFlags.DESTROY_WITH_PARENT,
                              parent=parent)
     dialog.set_transient_for(parent)

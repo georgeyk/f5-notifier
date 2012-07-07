@@ -24,9 +24,9 @@ import hashlib
 import urllib2
 import random
 
-from notification import send_message
 from gi.repository import GObject, GLib
-#import pynotify
+
+from f5notifier.notification import send_message
 
 
 #TODO: this should be splitted in two parts, one that really is a model and

@@ -21,8 +21,8 @@
 
 from gi.repository import Gtk
 
-from models import Resource
-from utils import find_resource
+from f5notifier.models import Resource
+from f5notifier.utils import find_resource
 
 
 class ResourceDialog(object):

@@ -21,8 +21,8 @@
 
 from gi.repository import Gtk
 
-from resource import ResourceDialog
-from utils import yesno, find_resource, open_file, run_app_dialog
+from f5notifier.resource import ResourceDialog
+from f5notifier.utils import yesno, find_resource, open_file, run_app_dialog
 
 
 class ResourceMonitor(object):

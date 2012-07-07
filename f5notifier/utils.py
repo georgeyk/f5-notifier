@@ -25,7 +25,7 @@ import time
 from gi.repository import Gtk, Gdk
 from gi._glib import GError
 
-from f5_notifierconfig import get_data_file
+from f5notifier.f5_notifierconfig import get_data_file
 
 
 _open_dialogs = []
