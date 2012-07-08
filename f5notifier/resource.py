@@ -49,8 +49,8 @@ class ResourceDialog(object):
 
     def _update_widgets(self):
         if self._resource:
-            self.uri_entry.set_text(self._resource.filename)
-            interval = self._resource.interval
+            self.uri_entry.set_text(self._resource.data.filename)
+            interval = self._resource.data.interval
             hour = 60 * 60
             if interval > hour:
                 interval = interval / hour
@@ -102,8 +102,8 @@ class ResourceDialog(object):
             resource = Resource(uri, interval)
             self._manager.add_resource(resource)
         else:
-            self._resource.filename = uri
-            self._resource.interval = interval
+            self._resource.data.filename = uri
+            self._resource.data.interval = interval
             self._manager.edited_resource(self._resource)
 
         # validate & message user

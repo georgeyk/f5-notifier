@@ -81,7 +81,7 @@ class ResourceMonitor(object):
                 break
 
             resource_id = self.resources_list.get_value(list_iter, 0)
-            if resource_id == resource.key:
+            if resource_id == resource.data.key:
                 return list_iter
 
             list_iter = self.resources_list.iter_next(list_iter)
@@ -95,11 +95,11 @@ class ResourceMonitor(object):
     def _add_resoure(self, resource):
         list_iter = self._find_iter_for_resource(resource)
         if list_iter is None:
-            self.resources_list.append([resource.key,
-                                        resource.filename,
-                                        str(resource.status_code),
-                                        resource.status_description,
-                                        resource.last_checked])
+            self.resources_list.append([resource.data.key,
+                                        resource.data.filename,
+                                        str(resource.data.status_code),
+                                        resource.data.status_description,
+                                        resource.data.last_checked])
 
     def _remove_resource(self, resource):
         list_iter = self._find_iter_for_resource(resource)
@@ -109,13 +109,13 @@ class ResourceMonitor(object):
     def _update_resource(self, resource):
         list_iter = self._find_iter_for_resource(resource)
         if list_iter:
-            self.resources_list.set_value(list_iter, 1, resource.filename)
+            self.resources_list.set_value(list_iter, 1, resource.data.filename)
             self.resources_list.set_value(list_iter, 2,
-                                          str(resource.status_code))
+                                          str(resource.data.status_code))
             self.resources_list.set_value(list_iter, 3,
-                                          resource.status_description)
+                                          resource.data.status_description)
             self.resources_list.set_value(list_iter, 4,
-                                          resource.last_checked)
+                                          resource.data.last_checked)
 
     #
     # Public API

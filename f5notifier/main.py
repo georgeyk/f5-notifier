@@ -127,6 +127,8 @@ class F5Notifier(object):
     def _on_monitor__activated(self, widget):
         parent = widget.get_parent().get_parent()
         run_app_dialog(ResourceMonitor, parent, self._manager)
+        # workaround for the TODO in __checked callback.
+        self.indicator.set_status(appindicator.IndicatorStatus.ACTIVE)
 
     def _on_settings__activated(self, widget):
         parent = widget.get_parent().get_parent()
@@ -138,5 +140,5 @@ class F5Notifier(object):
         run_app_dialog(get_about_dialog, parent)
 
     def _on_quit__activated(self, widget):
-        #self._settings.save()
+        self._settings.save()
         Gtk.main_quit()

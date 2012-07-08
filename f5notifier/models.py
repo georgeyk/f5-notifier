@@ -40,6 +40,27 @@ from f5notifier.notification import send_message
 #TODO: this should be splitted in two parts, one that really is a model and
 # other that emits the signals
 
+class ResourceData(object):
+    def __init__(self, filename, interval, key='', hash_value='',
+                 added='', last_checked='', status_code='',
+                 status_description='', running_status=''):
+
+        self.filename = filename
+        self.interval = interval
+        self.key = key
+        if not key:
+            self.key = str(random.randint(1, 10000))
+        self.hash_value = hash_value
+        self.added = added
+        if not added:
+            self.added = datetime.datetime.now()
+        self.last_checked = last_checked
+        self.status_code = status_code
+        self.status_description = status_description
+        self.running_status = running_status
+        self.source_id = None
+
+
 class Resource(GObject.GObject):
     __gsignals__ = {
             'checked': (GObject.SIGNAL_RUN_FIRST, None, ()),
@@ -51,22 +72,13 @@ class Resource(GObject.GObject):
 
     def __init__(self, filename, interval):
         GObject.GObject.__init__(self)
-        # just a placeholder
-        self.key = str(random.randint(1, 1000))
-        self.filename = filename
-        self.interval = interval
-        self.hash_value = ''
-        self.added = datetime.datetime.now()
-        self.last_checked = ''
-        self.status_code = ''
-        self.status_description = ''
-        self.running_status = Resource.STATUS_STOPPED
-        self.source_id = None
+        # just a placeholder, fix pickle with GObject.
+        self.data = ResourceData(filename, interval)
 
     def __str__(self):
-        return '<Resource %s: %s - %s: %s>' % (self.key, self.filename,
-                                               self.status_code,
-                                               self.status_description)
+        return '<Resource %s: %s - %s: %s>' % (self.data.key,
+            self.data.filename, self.data.status_code,
+            self.data.status_description)
 
     #
     # Private API
@@ -82,26 +94,26 @@ class Resource(GObject.GObject):
 
     def _open_resource(self):
         try:
-            self.last_checked = datetime.datetime.now().strftime('%x %X')
-            resource = urllib2.urlopen(self.filename)
+            self.data.last_checked = datetime.datetime.now().strftime('%x %X')
+            resource = urllib2.urlopen(self.data.filename)
         except (urllib2.URLError, urllib2.HTTPError), e:
-            self.status_code = e.errno
+            self.data.status_code = e.errno
             if not e.errno and hasattr(e, 'code'):
-                self.status_code = e.code
+                self.data.status_code = e.code
 
             self.status_description = e.message
             if not e.message and hasattr(e, 'msg'):
-                self.status_description = e.msg
+                self.data.status_description = e.msg
 
             if not self.status_description:
-                self.status_description = str(e)
-                self.status_code = self.status_code or 'ERROR'
+                self.data.status_description = str(e)
+                self.data.status_code = self.status_code or 'ERROR'
             return
         except Exception, e:
-            self.status_code = 'ERROR'
-            self.status_description = e.message or str(e)
-            self.source_id = None
-            self.running_status = Resource.STATUS_STOPPED
+            self.data.status_code = 'ERROR'
+            self.data.status_description = e.message or str(e)
+            self.data.source_id = None
+            self.data.running_status = Resource.STATUS_STOPPED
             return
 
         return resource
@@ -111,8 +123,8 @@ class Resource(GObject.GObject):
     #
 
     def check_change(self):
-        if self.running_status == Resource.STATUS_STOPPED:
-            self.source_id = None
+        if self.data.running_status == Resource.STATUS_STOPPED:
+            self.data.source_id = None
             self.emit('checked')
             return False
 
@@ -121,23 +133,23 @@ class Resource(GObject.GObject):
             # if we don't have hash value set, then we have a status error, so
             # we don't need to check the file content.
             self.emit('checked')
-            return bool(self.hash_value)
+            return bool(self.data.hash_value)
 
         hash_value = self._generate_hash_value(fp)
-        self.status_code = fp.getcode() or 'OK'
+        self.data.status_code = fp.getcode() or 'OK'
         fp.close()
 
-        if not self.hash_value:
-            self.hash_value = hash_value
+        if not self.data.hash_value:
+            self.data.hash_value = hash_value
 
-        if self.hash_value == hash_value:
-            self.status_description = 'OK'
+        if self.data.hash_value == hash_value:
+            self.data.status_description = 'OK'
         else:
-            self.hash_value = hash_value
-            self.status_description = 'CHANGED'
-            self.running_status = Resource.STATUS_STOPPED
-            self.source_id = None
-            send_message(self.status_description, self.filename)
+            self.data.hash_value = hash_value
+            self.data.status_description = 'CHANGED'
+            self.data.running_status = Resource.STATUS_STOPPED
+            self.data.source_id = None
+            send_message(self.data.status_description, self.data.filename)
             self.emit('checked')
             return False
 
@@ -145,25 +157,25 @@ class Resource(GObject.GObject):
         return True
 
     def can_start(self):
-        return self.running_status != Resource.STATUS_STARTED
+        return self.data.running_status != Resource.STATUS_STARTED
 
     def start(self):
         if self.can_start():
-            self.running_status = Resource.STATUS_STARTED
-            self.source_id = GLib.timeout_add_seconds(self.interval,
-                                                      self.check_change)
+            self.data.running_status = Resource.STATUS_STARTED
+            self.data.source_id = GLib.timeout_add_seconds(self.data.interval,
+                                                           self.check_change)
 
     def can_stop(self):
-        return self.running_status != Resource.STATUS_STOPPED
+        return self.data.running_status != Resource.STATUS_STOPPED
 
     def stop(self):
-        if self.source_id and self.can_stop():
-            self.running_status = Resource.STATUS_STOPPED
-            if GLib.source_remove(self.source_id):
-                self.source_id = None
+        if self.data.source_id and self.can_stop():
+            self.data.running_status = Resource.STATUS_STOPPED
+            if GLib.source_remove(self.data.source_id):
+                self.data.source_id = None
 
     def has_changed(self):
-        return self.status_description == 'CHANGED'
+        return self.data.status_description == 'CHANGED'
 
 
 class ResourceManager(GObject.GObject):
@@ -180,6 +192,11 @@ class ResourceManager(GObject.GObject):
     def __init__(self, settings):
         self._settings = settings
         GObject.GObject.__init__(self)
+        for data in self._settings.get_data_resources():
+            resource = Resource(data.filename, data.interval)
+            resource.data = data
+            #self.resources.append(resource)
+            self.add_resource(resource)
 
     #
     # Public API
@@ -188,7 +205,7 @@ class ResourceManager(GObject.GObject):
     def get_resource_by_key(self, key):
         # placeholder, until we set a database backend
         for resource in self.resources:
-            if resource.key == key:
+            if resource.data.key == key:
                 return resource
 
     def add_resource(self, resource):
@@ -289,18 +306,21 @@ class SettingsManager(object):
     #
 
     def add_resource(self, resource):
-        if resource not in self.CONF_DATA['FILES']:
-            self.CONF_DATA['FILES'].append(resource)
+        if resource.data not in self.CONF_DATA['FILES']:
+            self.CONF_DATA['FILES'].append(resource.data)
 
     def remove_resource(self, resource):
-        if resource in self.CONF_DATA['FILES']:
-            self.CONF_DATA['FILES'].remove(resource)
+        if resource.data in self.CONF_DATA['FILES']:
+            self.CONF_DATA['FILES'].remove(resource.data)
 
     def update_resource(self, resource):
-        if resource in self.CONF_DATA['FILES']:
-            i = self.CONF_DATA['FILES'].index(resource)
+        if resource.data in self.CONF_DATA['FILES']:
+            i = self.CONF_DATA['FILES'].index(resource.data)
             self.remove_resource(resource)
-            self.CONF_DATA['FILES'].insert(i, resource)
+            self.CONF_DATA['FILES'].insert(i, resource.data)
+
+    def get_data_resources(self):
+        return self.CONF_DATA['FILES']
 
     def update_value(self, key, value):
         if key in self.CONF_DATA.keys():
