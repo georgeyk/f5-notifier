@@ -38,6 +38,7 @@ class ResourceDialog(object):
         self.uri_entry = builder.get_object('uri_entry')
         self.unit_combo = builder.get_object('unit_combo')
         self.interval = builder.get_object('interval')
+        self.add_button = builder.get_object('add_button')
         self.interval_adjustment = builder.get_object('interval_adjustment')
         self.interval.set_value(5)
         self._manager = manager
@@ -62,6 +63,8 @@ class ResourceDialog(object):
                 self.unit_combo.set_active(0)
 
             self.interval.set_value(interval)
+
+        self.add_button.set_sensitive(bool(self.uri_entry.get_text()))
 
     def _read_combo_unit_value(self):
         tree_iter = self.unit_combo.get_active_iter()
@@ -98,6 +101,9 @@ class ResourceDialog(object):
     def _save_resource(self):
         uri = self.uri_entry.get_text()
         interval = self._get_interval_value()
+        if not uri:
+            return
+
         if self._resource is None:
             resource = Resource(uri, interval)
             self._manager.add_resource(resource)
@@ -128,6 +134,7 @@ class ResourceDialog(object):
     def _on_filechooser_button__file_set(self, widget):
         uri = widget.get_uri()
         self.uri_entry.set_text(uri)
+        self._update_widgets()
 
     def _on_unit_combo__changed(self, widget):
         self._update_adjustment(self._read_combo_unit_value())
@@ -136,3 +143,6 @@ class ResourceDialog(object):
         if widget.get_text():
             self._save_resource()
             self.destroy()
+
+    def _on_uri_entry__changed(self, widget):
+        self._update_widgets()

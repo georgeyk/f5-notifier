@@ -58,7 +58,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="button1">
+              <object class="GtkButton" id="add_button">
                 <property name="label">gtk-add</property>
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
@@ -108,6 +108,7 @@
                 <property name="can_focus">True</property>
                 <property name="hexpand">True</property>
                 <property name="invisible_char">•</property>
+                <signal name="changed" handler="_on_uri_entry__changed" swapped="no"/>
                 <signal name="activate" handler="_on_uri_entry__activate" swapped="no"/>
               </object>
               <packing>
@@ -252,7 +253,7 @@
     </child>
     <action-widgets>
       <action-widget response="0">button2</action-widget>
-      <action-widget response="0">button1</action-widget>
+      <action-widget response="0">add_button</action-widget>
     </action-widgets>
   </object>
 </interface>

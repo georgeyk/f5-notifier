@@ -97,9 +97,7 @@ class Resource(GObject.GObject):
             self.data.last_checked = datetime.datetime.now().strftime('%x %X')
             resource = urllib2.urlopen(self.data.filename)
         except (urllib2.URLError, urllib2.HTTPError), e:
-            self.data.status_code = e.errno
-            if not e.errno and hasattr(e, 'code'):
-                self.data.status_code = e.code
+            self.data.status_code = 'ERROR'
 
             self.status_description = e.message
             if not e.message and hasattr(e, 'msg'):
@@ -107,7 +105,6 @@ class Resource(GObject.GObject):
 
             if not self.status_description:
                 self.data.status_description = str(e)
-                self.data.status_code = self.status_code or 'ERROR'
             return
         except Exception, e:
             self.data.status_code = 'ERROR'
@@ -136,7 +133,7 @@ class Resource(GObject.GObject):
             return bool(self.data.hash_value)
 
         hash_value = self._generate_hash_value(fp)
-        self.data.status_code = fp.getcode() or 'OK'
+        self.data.status_code = 'RUNNING'
         fp.close()
 
         if not self.data.hash_value:
@@ -146,6 +143,7 @@ class Resource(GObject.GObject):
             self.data.status_description = 'OK'
         else:
             self.data.hash_value = hash_value
+            self.data.status_code = 'STOPPED'
             self.data.status_description = 'CHANGED'
             self.data.running_status = Resource.STATUS_STOPPED
             self.data.source_id = None
@@ -162,6 +160,7 @@ class Resource(GObject.GObject):
     def start(self):
         if self.can_start():
             self.data.running_status = Resource.STATUS_STARTED
+            self.data.status_code = 'RUNNING'
             self.data.source_id = GLib.timeout_add_seconds(self.data.interval,
                                                            self.check_change)
 
@@ -171,6 +170,7 @@ class Resource(GObject.GObject):
     def stop(self):
         if self.data.source_id and self.can_stop():
             self.data.running_status = Resource.STATUS_STOPPED
+            self.data.status_code = 'STOPPED'
             if GLib.source_remove(self.data.source_id):
                 self.data.source_id = None
 
