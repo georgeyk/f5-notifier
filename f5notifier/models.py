@@ -21,8 +21,16 @@
 
 import datetime
 import hashlib
-import urllib2
+import os
+import os.path
+
+try:
+    import cPickle as pickle
+except Exception:
+    import pickle
+
 import random
+import urllib2
 
 from gi.repository import GObject, GLib
 
@@ -169,7 +177,8 @@ class ResourceManager(GObject.GObject):
             'resource-checked': (GObject.SIGNAL_RUN_FIRST, None, (object,)),
     }
 
-    def __init__(self):
+    def __init__(self, settings):
+        self._settings = settings
         GObject.GObject.__init__(self)
 
     #
@@ -187,12 +196,14 @@ class ResourceManager(GObject.GObject):
             resource.connect('checked', self._on_resource__checked)
             self.resources.append(resource)
             resource.start()
+            self._settings.add_resource(resource)
             self.emit('added', resource)
 
     def remove_resource(self, resource):
         if resource in self.resources:
             self.resources.remove(resource)
             resource.stop()
+            self._settings.remove_resource(resource)
             self.emit('removed', resource)
 
     def edited_resource(self, resource):
@@ -202,6 +213,7 @@ class ResourceManager(GObject.GObject):
             resource.stop()
             resource.start()
             self.resources.insert(i, resource)
+            self._settings.update_resource(resource)
             self.emit('edited', resource)
 
     def start_resource(self, resource):
@@ -223,3 +235,78 @@ class ResourceManager(GObject.GObject):
 
     def _on_resource__checked(self, resource):
         self.emit('resource-checked', resource)
+
+
+class SettingsManager(object):
+    DEFAULT_DIR = '~/.config/f5-notifier/'
+    CONF_FP = 'config'
+    CONF_DATA = {'DISABLE_NOTIFICATION': True,
+                 'IGNORE_STATUS_CHANGE': True,
+                 'EXTRA_SETTINGS': False,
+                 'EXTRA_SETTINGS_DIR': '',
+                 'FILES': [],}
+
+    def __init__(self):
+        self._default_path = os.path.expanduser(self.DEFAULT_DIR)
+        if not os.path.isdir(self._default_path):
+            os.mkdir(self._default_path)
+
+        if not os.path.isfile(os.path.join(self._default_path, self.CONF_FP)):
+            # Create a default settings file.
+            self.save()
+
+        self._load_settings()
+
+    #
+    # Private API
+    #
+
+    def _create_default_settings(self):
+        pass
+
+    def _get_data_from_file(self, filename):
+        try:
+            fp = open(filename)
+            data = pickle.load(fp)
+            fp.close()
+        except Exception:
+            return {}
+
+        return data
+
+    def _get_file(self, extra=False):
+        datafile = os.path.join(self._default_path, self.CONF_FP)
+
+        return datafile
+
+    def _load_settings(self):
+        conf_data = self._get_data_from_file(self._get_file())
+        if conf_data and type(conf_data) == dict:
+            self.CONF_DATA.update(conf_data)
+
+    #
+    # Public API
+    #
+
+    def add_resource(self, resource):
+        if resource not in self.CONF_DATA['FILES']:
+            self.CONF_DATA['FILES'].append(resource)
+
+    def remove_resource(self, resource):
+        if resource in self.CONF_DATA['FILES']:
+            self.CONF_DATA['FILES'].remove(resource)
+
+    def update_resource(self, resource):
+        if resource in self.CONF_DATA['FILES']:
+            i = self.CONF_DATA['FILES'].index(resource)
+            self.remove_resource(resource)
+            self.CONF_DATA['FILES'].insert(i, resource)
+
+    def update_value(self, key, value):
+        if key in self.CONF_DATA.keys():
+            self.CONF_DATA[key] = value
+
+    def save(self):
+        conf = open(self._get_file(), 'w+')
+        pickle.dump(self.CONF_DATA, conf)
+        conf.close()

@@ -26,7 +26,7 @@ gettext.textdomain('f5-notifier')
 from gi.repository import AppIndicator3 as appindicator
 from gi.repository import Gtk
 
-from f5notifier.models import ResourceManager
+from f5notifier.models import ResourceManager, SettingsManager
 from f5notifier.about import get_about_dialog
 from f5notifier.resource import ResourceDialog
 from f5notifier.resource_monitor import ResourceMonitor
@@ -48,8 +48,10 @@ class F5Notifier(object):
             self.indicator.set_attention_icon('f5notifier-attention')
 
         menu = self._build_menu()
+        menu.connect('activate-current', self._foo)
         self.indicator.set_menu(menu)
-        self._manager = ResourceManager()
+        self._settings = SettingsManager()
+        self._manager = ResourceManager(self._settings)
         self._manager.connect('resource-checked', self._on_resource__checked)
 
     #
@@ -115,7 +117,7 @@ class F5Notifier(object):
     #
 
     def _on_resource__checked(self, manager, resource):
-        #TODO: improve this
+        #TODO: find a callback to disable status attention
         if manager.has_resource_change():
             self.indicator.set_status(appindicator.IndicatorStatus.ATTENTION)
 
@@ -129,11 +131,13 @@ class F5Notifier(object):
 
     def _on_settings__activated(self, widget):
         parent = widget.get_parent().get_parent()
-        run_app_dialog(SettingsDialog, parent, self._manager)
+        run_app_dialog(SettingsDialog, parent, self._manager,
+                       settings=self._settings)
 
     def _on_about__activated(self, widget):
         parent = widget.get_parent().get_parent()
         run_app_dialog(get_about_dialog, parent)
 
     def _on_quit__activated(self, widget):
+        #self._settings.save()
         Gtk.main_quit()

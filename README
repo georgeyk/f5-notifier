@@ -1,4 +1,11 @@
-TODO
+F5 Notifier
+===========
+
+
+Icons
+=====
+
+Thanks to http://openclipart.org/detail/5490/magnifying-glass-by-mcol
 
 
 Development Notes
@@ -12,12 +19,10 @@ related files for packaging purposes.
 
 Packaging / Building
 --------------------
+
 $ cd f5-notifier/
 $ debuild -S -i -I
 (sign the package)
 $ cd ..
 $ dput ppa:georgeyk/f5-notifier-daily f5-notifier_V_source.changes
 (V is the version package, also, update ppa name)
-
-
-

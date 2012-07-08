@@ -25,7 +25,8 @@ from f5notifier.utils import find_resource
 
 
 class SettingsDialog(object):
-    def __init__(self, manager, parent):
+    def __init__(self, manager, parent, settings):
+        self._settings = settings
         builder = Gtk.Builder()
         builder.add_from_file(find_resource('ui', 'Settings.glade'))
         #builder.connect_signals(self)
