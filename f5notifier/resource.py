@@ -54,10 +54,14 @@ class ResourceDialog(object):
             hour = 60 * 60
             if interval > hour:
                 interval = interval / hour
-            if interval > 60:
+                self.unit_combo.set_active(2)
+            elif interval > 60:
                 interval = interval / 60
+                self.unit_combo.set_active(1)
+            else:
+                self.unit_combo.set_active(0)
+
             self.interval.set_value(interval)
-            #TODO: update combo unit
 
     def _read_combo_unit_value(self):
         tree_iter = self.unit_combo.get_active_iter()

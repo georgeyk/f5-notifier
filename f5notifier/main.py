@@ -48,7 +48,6 @@ class F5Notifier(object):
             self.indicator.set_attention_icon('f5notifier-attention')
 
         menu = self._build_menu()
-        menu.connect('activate-current', self._foo)
         self.indicator.set_menu(menu)
         self._settings = SettingsManager()
         self._manager = ResourceManager(self._settings)
