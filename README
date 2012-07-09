@@ -1,0 +1,56 @@
+F5 Notifier
+===========
+
+If you ever did some crazy F5-hitting in one web page, you really know how
+annoying it could be to wait for some page update.
+But that time is over and now you can give your F5 key a break!
+
+F5 Notifier watches that page and notify you if something has changed.
+Get up and get yourself a nice cup of coffee and, well, wait =)
+
+Also, you could track changes in local files and some experimental
+synchronization of your configuration across your computers by saving your
+settings in a Dropbox/Ubuntu One folder.
+
+
+Future/TODO
+===========
+
+* Translations
+* View changes dialog
+* Track changes in specific parts of a file
+* Security/Flooding issues
+* Bugfixes
+
+
+Icons
+=====
+
+Thanks to http://openclipart.org/detail/5490/magnifying-glass-by-mcol
+
+
+Development Notes
+==================
+
+Quickly[quickly] was used to generate setup.py, the debian/ folder and some
+related files for packaging purposes only.
+
+[quickly] : http://developer.ubuntu.com/resources/tools/quickly/
+
+
+Packaging / Building
+--------------------
+
+$ cd f5-notifier/
+$ debuild -S -i -I
+(sign the package)
+$ cd ..
+$ dput ppa:georgeyk/f5-notifier-daily f5-notifier_V_source.changes
+(V is the version package, also, update ppa name)
+
+Contact
+=======
+
+Suggestions are welcome! =)
+
+George Y. Kussumoto <contato@georgeyk.com.br>

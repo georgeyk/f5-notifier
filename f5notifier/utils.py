@@ -19,11 +19,33 @@
 ##
 ##
 
+import os.path
 import time
 
-from gi.repository import Gtk
+from gi.repository import Gtk, Gdk
 from gi._glib import GError
 
+from f5notifier.f5_notifierconfig import get_data_file
+
+
+_open_dialogs = []
+
+def run_app_dialog(klass, parent, manager=None, **kwargs):
+    # I'm pretty sure that might be 'right' way to prevent the user open
+    # multiple dialogs.
+    global _open_dialogs
+
+    name = klass.__name__
+    if name in _open_dialogs:
+        return
+    _open_dialogs.append(name)
+
+    dialog = klass(parent=parent, manager=manager, **kwargs)
+    retval = dialog.run()
+    dialog.destroy()
+    _open_dialogs.remove(name)
+
+    return retval
 
 def warn_user(title, message, parent=None):
     dialog = Gtk.MessageDialog(parent, 0, Gtk.MessageType.WARNING,
@@ -32,17 +54,34 @@ def warn_user(title, message, parent=None):
     dialog.run()
     dialog.destroy()
 
+def yesno(title, message, parent):
+    flags = Gtk.DialogFlags.MODAL
+    dialog = Gtk.MessageDialog(parent, flags, Gtk.MessageType.QUESTION,
+                               Gtk.ButtonsType.YES_NO, title)
+    dialog.format_secondary_text(message)
+    retval = dialog.run()
+    dialog.destroy()
+    return retval
 
 def open_file(uri, show_dialog=True, parent=None):
-    # Currently, we just support local and web files, defaults to local files.
-    if not uri.startswith('http://') or not uri.startswith('file:///'):
-        uri = 'file://' + uri
-
     try:
-        retval = Gtk.show_uri(None, uri, time.time())
+        screen = Gdk.Screen.get_default()
+        retval = Gtk.show_uri(screen, uri, time.time())
     except GError, e:
         retval = False
         if show_dialog:
             warn_user('Error', e.message, parent=parent)
 
     return retval
+
+def find_resources_dir(resource_type):
+    directory = get_data_file(resource_type)
+    if os.path.isdir(directory):
+        return directory
+
+def find_resource(resource_type, resource_name):
+    resource_dir = find_resources_dir(resource_type)
+    if resource_dir:
+        filepath = resource_dir + '/' + resource_name
+        if os.path.isfile(filepath):
+            return filepath
