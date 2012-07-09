@@ -116,6 +116,7 @@ class ResourceMonitor(object):
                                           resource.data.status_description)
             self.resources_list.set_value(list_iter, 4,
                                           resource.data.last_checked)
+        self._update_widgets(resource)
 
     #
     # Public API

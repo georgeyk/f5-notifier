@@ -29,8 +29,20 @@ class SettingsDialog(object):
         self._settings = settings
         builder = Gtk.Builder()
         builder.add_from_file(find_resource('ui', 'Settings.glade'))
-        #builder.connect_signals(self)
+        builder.connect_signals(self)
         self.window = builder.get_object('Settings')
+        self.notification = builder.get_object('notification_switch')
+        self.extra_filechooser = builder.get_object(
+                                            'extra_settings_filechooser')
+        self.extra_settings = builder.get_object('extra_settings_switch')
+
+        self.notification.set_active(
+                self._settings.get_value('DISABLE_NOTIFICATION'))
+        self.extra_settings.set_active(
+                self._settings.get_value('EXTRA_SETTINGS'))
+        self.extra_filechooser.set_sensitive(self.extra_settings.get_active())
+        self.extra_filechooser.select_filename(
+                self._settings.get_value('EXTRA_SETTINGS_DIR'))
 
     def run(self):
         return self.window.run()
@@ -41,3 +53,16 @@ class SettingsDialog(object):
     #
     # Callbacks
     #
+
+    def _on_extra_settings_switch__notify(self, widget, *args, **kwargs):
+        is_active = widget.get_active()
+        self.extra_filechooser.set_sensitive(is_active)
+
+    def _on_apply_button__clicked(self, widget):
+        self._settings.update_value('DISABLE_NOTIFICATION',
+                                    self.notification.get_active())
+        self._settings.update_value('EXTRA_SETTINGS',
+                                    self.extra_settings.get_active())
+        settings_dir = self.extra_filechooser.get_filename()
+        self._settings.update_value('EXTRA_SETTINGS_DIR', settings_dir)
+        self._settings.save()

@@ -42,13 +42,14 @@ class ResourceDialog(object):
         self.interval_adjustment = builder.get_object('interval_adjustment')
         self.interval.set_value(5)
         self._manager = manager
+        self._setup_widgets()
         self._update_widgets()
 
     #
     # Private API
     #
 
-    def _update_widgets(self):
+    def _setup_widgets(self):
         if self._resource:
             self.uri_entry.set_text(self._resource.data.filename)
             interval = self._resource.data.interval
@@ -64,6 +65,7 @@ class ResourceDialog(object):
 
             self.interval.set_value(interval)
 
+    def _update_widgets(self):
         self.add_button.set_sensitive(bool(self.uri_entry.get_text()))
 
     def _read_combo_unit_value(self):

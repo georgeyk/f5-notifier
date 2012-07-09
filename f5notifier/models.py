@@ -121,6 +121,7 @@ class Resource(GObject.GObject):
 
     def check_change(self):
         if self.data.running_status == Resource.STATUS_STOPPED:
+            self.data.status_code = 'STOPPED'
             self.data.source_id = None
             self.emit('checked')
             return False
@@ -142,12 +143,11 @@ class Resource(GObject.GObject):
         if self.data.hash_value == hash_value:
             self.data.status_description = 'OK'
         else:
-            self.data.hash_value = hash_value
+            self.data.hash_value = ''
             self.data.status_code = 'STOPPED'
             self.data.status_description = 'CHANGED'
             self.data.running_status = Resource.STATUS_STOPPED
             self.data.source_id = None
-            send_message(self.data.status_description, self.data.filename)
             self.emit('checked')
             return False
 
@@ -161,6 +161,8 @@ class Resource(GObject.GObject):
         if self.can_start():
             self.data.running_status = Resource.STATUS_STARTED
             self.data.status_code = 'RUNNING'
+            if self.data.interval > 10:
+                self.check_change()
             self.data.source_id = GLib.timeout_add_seconds(self.data.interval,
                                                            self.check_change)
 
@@ -168,7 +170,7 @@ class Resource(GObject.GObject):
         return self.data.running_status != Resource.STATUS_STOPPED
 
     def stop(self):
-        if self.data.source_id and self.can_stop():
+        if self.can_stop():
             self.data.running_status = Resource.STATUS_STOPPED
             self.data.status_code = 'STOPPED'
             if GLib.source_remove(self.data.source_id):
@@ -195,7 +197,6 @@ class ResourceManager(GObject.GObject):
         for data in self._settings.get_data_resources():
             resource = Resource(data.filename, data.interval)
             resource.data = data
-            #self.resources.append(resource)
             self.add_resource(resource)
 
     #
@@ -210,6 +211,10 @@ class ResourceManager(GObject.GObject):
 
     def add_resource(self, resource):
         if resource not in self.resources:
+            # if we are re-adding an resource, we shoud stop it first.
+            if resource.data.running_status == Resource.STATUS_STARTED:
+                resource.stop()
+
             resource.connect('checked', self._on_resource__checked)
             self.resources.append(resource)
             resource.start()
@@ -251,6 +256,11 @@ class ResourceManager(GObject.GObject):
     #
 
     def _on_resource__checked(self, resource):
+        if resource.has_changed():
+            if not self._settings.get_value('DISABLE_NOTIFICATION'):
+                send_message(resource.data.status_description,
+                             resource.data.filename)
+
         self.emit('resource-checked', resource)
 
 
@@ -278,9 +288,6 @@ class SettingsManager(object):
     # Private API
     #
 
-    def _create_default_settings(self):
-        pass
-
     def _get_data_from_file(self, filename):
         try:
             fp = open(filename)
@@ -293,13 +300,30 @@ class SettingsManager(object):
 
     def _get_file(self, extra=False):
         datafile = os.path.join(self._default_path, self.CONF_FP)
+        if extra:
+            datafile = os.path.join(self.CONF_DATA['EXTRA_SETTINGS_DIR'],
+                                    self.CONF_FP)
 
         return datafile
+
+    def _is_resource_in_settings(self, resource):
+        for f in self.CONF_DATA['FILES']:
+            if f.key == resource.key:
+                return True
+        return False
 
     def _load_settings(self):
         conf_data = self._get_data_from_file(self._get_file())
         if conf_data and type(conf_data) == dict:
             self.CONF_DATA.update(conf_data)
+        if self.CONF_DATA['EXTRA_SETTINGS']:
+            conf_data = self._get_data_from_file(self._get_file(extra=True))
+            print conf_data, self.CONF_DATA
+            if conf_data and type(conf_data) == dict:
+                if conf_data.has_key('FILES'):
+                    for f in conf_data['FILES']:
+                        if not self._is_resource_in_settings(f):
+                            self.CONF_DATA['FILES'].append(f)
 
     #
     # Public API
@@ -326,7 +350,16 @@ class SettingsManager(object):
         if key in self.CONF_DATA.keys():
             self.CONF_DATA[key] = value
 
+    def get_value(self, key):
+        if key in self.CONF_DATA.keys():
+            return self.CONF_DATA[key]
+
     def save(self):
         conf = open(self._get_file(), 'w+')
         pickle.dump(self.CONF_DATA, conf)
         conf.close()
+        if self.CONF_DATA['EXTRA_SETTINGS']:
+            self._load_settings()
+            conf = open(self._get_file(extra=True), 'w+')
+            pickle.dump(dict(FILES=self.CONF_DATA['FILES']), conf)
+            conf.close()
