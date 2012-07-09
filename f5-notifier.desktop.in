@@ -3,6 +3,6 @@ _Name=F5 Notifier
 _Comment=F5Notifier application
 Categories=GNOME;Utility;
 Exec=f5-notifier
-Icon=/usr/share/f5-notifier/images/f5-notifier.svg
+Icon=/usr/share/f5-notifier/images/f5notifier.svg
 Terminal=false
 Type=Application

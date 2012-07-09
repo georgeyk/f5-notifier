@@ -64,7 +64,7 @@ def update_desktop_file(datadir):
 
         for line in fin:
             if 'Icon=' in line:
-                line = "Icon=%s\n" % (datadir + 'images/f5-notifier.svg')
+                line = "Icon=%s\n" % (datadir + 'images/f5notifier.svg')
             fout.write(line)
         fout.flush()
         fout.close()
