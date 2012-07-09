@@ -318,7 +318,6 @@ class SettingsManager(object):
             self.CONF_DATA.update(conf_data)
         if self.CONF_DATA['EXTRA_SETTINGS']:
             conf_data = self._get_data_from_file(self._get_file(extra=True))
-            print conf_data, self.CONF_DATA
             if conf_data and type(conf_data) == dict:
                 if conf_data.has_key('FILES'):
                     for f in conf_data['FILES']:

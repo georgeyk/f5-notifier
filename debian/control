@@ -20,4 +20,11 @@ Depends: ${misc:Depends},
  python-gi,
  gir1.2-appindicator3-0.1
 Description: F5 Notifier
- TODO A BETTER DESCRIPTION HERE
+ If you ever did some crazy F5-hitting in one web page, you really know how
+ annoying it could be to wait for some page update.
+ But that time is over and now you can give your F5 key a break!
+ F5 Notifier watches that page and notify you if something has changed.
+ Get up and get yourself a nice cup of coffee and, well, wait =)
+ Also, you could track changes in local files and some experimental
+ synchronization of your configuration across your computers by saving your
+ settings in a Dropbox/Ubuntu One folder.

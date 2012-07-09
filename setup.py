@@ -98,7 +98,7 @@ DistUtilsExtra.auto.setup(
     author=f5notifier.AUTHORS[0],
     author_email=f5notifier.AUTHOR_EMAIL,
     description='F5 Notifier',
-    long_description='TODO',
+    long_description='A simple notification application to track file changes.',
     url=f5notifier.WEBSITE,
     cmdclass={'install': InstallAndUpdateDataDirectory}
     )
