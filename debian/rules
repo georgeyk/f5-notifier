@@ -19,9 +19,9 @@ override_dh_install:
 	dh_install
 	mkdir -p debian/f5-notifier/opt/extras.ubuntu.com/f5-notifier/bin
 	if [ -x debian/f5-notifier/opt/extras.ubuntu.com/f5-notifier/f5-notifier ]; then mv debian/f5-notifier/opt/extras.ubuntu.com/f5-notifier/f5-notifier debian/f5-notifier/opt/extras.ubuntu.com/f5-notifier/bin; fi
-	if [ -f debian/f5-notifier/opt/extras.ubuntu.com/f5-notifier/share/applications/extras-f5-notifier.desktop ]; then \
+	if [ -f debian/f5-notifier/opt/extras.ubuntu.com/f5-notifier/share/applications/f5-notifier.desktop ]; then \
 		mkdir -p debian/f5-notifier/usr/share/applications; \
-		mv debian/f5-notifier/opt/extras.ubuntu.com/f5-notifier/share/applications/extras-f5-notifier.desktop debian/f5-notifier/usr/share/applications/extras-f5-notifier.desktop; \
+		mv debian/f5-notifier/opt/extras.ubuntu.com/f5-notifier/share/applications/f5-notifier.desktop debian/f5-notifier/usr/share/applications/extras-f5-notifier.desktop; \
 		rmdir --ignore-fail-on-non-empty debian/f5-notifier/opt/extras.ubuntu.com/f5-notifier/share/applications; \
 		sed -i 's|Exec=.*|Exec=/opt/extras.ubuntu.com/f5-notifier/bin/f5-notifier|' debian/f5-notifier/usr/share/applications/extras-f5-notifier.desktop; \
 		sed -i 's|Icon=/usr/|Icon=/opt/extras.ubuntu.com/f5-notifier/|' debian/f5-notifier/usr/share/applications/extras-f5-notifier.desktop; \
