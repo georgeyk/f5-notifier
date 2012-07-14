@@ -11,7 +11,9 @@ override_dh_auto_install:
 
 override_dh_python2:
 	dh_python2 /opt/extras.ubuntu.com/f5-notifier
-
+	if [ -f debian/f5-notifier/usr/share/python/runtime.d/f5-notifier.rtupdate ]; then \
+		rm debian/f5-notifier/usr/share/python/runtime.d/f5-notifier.rtupdate; \
+	fi
 
 override_dh_install:
 	dh_install
