@@ -21,7 +21,7 @@
 
 PROGRAM_NAME = 'F5 Notifier'
 PACKAGE_NAME = 'f5-notifier'
-VERSION = '0.1.0'
+VERSION = '0.1.5'
 WEBSITE = 'https://launchpad.net/f5-notifier'
 LICENSE = 'GPL-3'
 COPYRIGHT = '2012 © George Kussumoto'
