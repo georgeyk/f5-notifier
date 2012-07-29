@@ -1,0 +1,2 @@
+recursive-include f5notifier *.py
+recursive-include data *.glade
