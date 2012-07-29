@@ -1,3 +1,10 @@
+f5-notifier (0.1.6) precise; urgency=low
+
+  [ George Y. Kussumoto ]
+  * Fix Release.
+
+ -- George Y. Kussumoto <contato@georgeyk.com.br>  Mon, 23 Jul 2012 23:18:37 -0300
+
 f5-notifier (0.1.5) precise; urgency=low
 
   [ George Y. Kussumoto ]
