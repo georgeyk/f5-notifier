@@ -19,9 +19,9 @@
 ##
 ##
 
-from gettext import gettext as _
-import gettext
-gettext.textdomain('f5-notifier')
+import locale
+from locale import gettext as _
+locale.textdomain('f5-notifier')
 
 from gi.repository import AppIndicator3 as appindicator
 from gi.repository import Gtk
@@ -68,7 +68,7 @@ class F5Notifier(object):
         image_path = find_resource('images', 'f5notifier.svg')
         if image_path:
             monitor_image = Gtk.Image.new_from_file(image_path)
-            monitor = Gtk.ImageMenuItem.new_with_label('Monitor')
+            monitor = Gtk.ImageMenuItem.new_with_label(_(u'Monitor'))
             monitor.set_image(monitor_image)
             monitor.set_always_show_image(True)
             menu.append(monitor)
