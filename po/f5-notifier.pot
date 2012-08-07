@@ -1,0 +1,79 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-08-06 22:12-0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../f5-notifier.desktop.in.h:1
+msgid "F5 Notifier"
+msgstr ""
+
+#: ../f5-notifier.desktop.in.h:2
+msgid "F5Notifier application"
+msgstr ""
+
+#: ../f5notifier/models.py:103 ../f5notifier/models.py:113
+msgid "ERROR"
+msgstr ""
+
+#: ../f5notifier/models.py:127 ../f5notifier/models.py:150
+#: ../f5notifier/models.py:178
+msgid "STOPPED"
+msgstr ""
+
+#: ../f5notifier/models.py:140 ../f5notifier/models.py:166
+msgid "RUNNING"
+msgstr ""
+
+#: ../f5notifier/models.py:147
+msgid "OK"
+msgstr ""
+
+#: ../f5notifier/models.py:151 ../f5notifier/models.py:183
+msgid "CHANGED"
+msgstr ""
+
+#: ../f5notifier/about.py:44
+msgid "F5 Notifier Homepage"
+msgstr ""
+
+#: ../f5notifier/resource_monitor.py:151
+msgid "Remove Resource"
+msgstr ""
+
+#: ../f5notifier/resource_monitor.py:152
+msgid "Are you sure you want to remove the selected resource ?"
+msgstr ""
+
+#: ../f5notifier/resource.py:84
+msgid "seconds"
+msgstr ""
+
+#: ../f5notifier/resource.py:89 ../f5notifier/resource.py:103
+msgid "hours"
+msgstr ""
+
+#: ../f5notifier/resource.py:101
+msgid "minutes"
+msgstr ""
+
+#: ../f5notifier/main.py:71
+msgid "Monitor"
+msgstr ""
+
+#: ../f5notifier/utils.py:76
+msgid "Error"
+msgstr ""

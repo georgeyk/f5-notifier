@@ -19,6 +19,10 @@
 ##
 ##
 
+import locale
+from locale import gettext as _
+locale.textdomain('f5-notifier')
+
 from gi.repository import Gtk
 
 from f5notifier.resource import ResourceDialog
@@ -144,9 +148,9 @@ class ResourceMonitor(object):
                            resource=resource)
 
     def _on_remove_button__clicked(self, widget):
-        retval = yesno('Remove Resource',
-                    'Are you sure you want to remove the selected resource ?',
-                     parent=self._parent)
+        retval = yesno(_(u'Remove Resource'),
+                 _(u'Are you sure you want to remove the selected resource ?'),
+                 parent=self._parent)
         if retval == Gtk.ResponseType.YES:
             resource = self._get_current_selected()
             if resource:

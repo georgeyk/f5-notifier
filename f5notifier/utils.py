@@ -19,6 +19,9 @@
 ##
 ##
 
+import locale
+from locale import gettext as _
+locale.textdomain('f5-notifier')
 import os.path
 import time
 
@@ -70,7 +73,7 @@ def open_file(uri, show_dialog=True, parent=None):
     except GError, e:
         retval = False
         if show_dialog:
-            warn_user('Error', e.message, parent=parent)
+            warn_user(_(u'Error'), e.message, parent=parent)
 
     return retval
 

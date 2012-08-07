@@ -19,6 +19,10 @@
 ##
 ##
 
+import locale
+from locale import gettext as _
+locale.textdomain('f5-notifier')
+
 from gi.repository import Gtk
 
 import f5notifier
@@ -37,7 +41,7 @@ def get_about_dialog(manager, parent):
                              version=f5notifier.VERSION,
                              copyright=f5notifier.COPYRIGHT,
                              website=f5notifier.WEBSITE,
-                             website_label='F5 Notifier Homepage',
+                             website_label=_(u'F5 Notifier Homepage'),
                              license_type=Gtk.License.GPL_3_0,
                              authors=f5notifier.AUTHORS,
                              flags=Gtk.DialogFlags.DESTROY_WITH_PARENT,

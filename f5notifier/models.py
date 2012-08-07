@@ -20,6 +20,9 @@
 ##
 
 import datetime
+import locale
+from locale import gettext as _
+locale.textdomain('f5-notifier')
 import hashlib
 import os
 import os.path
@@ -97,7 +100,7 @@ class Resource(GObject.GObject):
             self.data.last_checked = datetime.datetime.now().strftime('%x %X')
             resource = urllib2.urlopen(self.data.filename)
         except (urllib2.URLError, urllib2.HTTPError), e:
-            self.data.status_code = 'ERROR'
+            self.data.status_code = _(u'ERROR')
 
             self.status_description = e.message
             if not e.message and hasattr(e, 'msg'):
@@ -107,7 +110,7 @@ class Resource(GObject.GObject):
                 self.data.status_description = str(e)
             return
         except Exception, e:
-            self.data.status_code = 'ERROR'
+            self.data.status_code = _(u'ERROR')
             self.data.status_description = e.message or str(e)
             self.data.source_id = None
             self.data.running_status = Resource.STATUS_STOPPED
@@ -121,7 +124,7 @@ class Resource(GObject.GObject):
 
     def check_change(self):
         if self.data.running_status == Resource.STATUS_STOPPED:
-            self.data.status_code = 'STOPPED'
+            self.data.status_code = _(u'STOPPED')
             self.data.source_id = None
             self.emit('checked')
             return False
@@ -134,18 +137,18 @@ class Resource(GObject.GObject):
             return bool(self.data.hash_value)
 
         hash_value = self._generate_hash_value(fp)
-        self.data.status_code = 'RUNNING'
+        self.data.status_code = _(u'RUNNING')
         fp.close()
 
         if not self.data.hash_value:
             self.data.hash_value = hash_value
 
         if self.data.hash_value == hash_value:
-            self.data.status_description = 'OK'
+            self.data.status_description = _(u'OK')
         else:
             self.data.hash_value = ''
-            self.data.status_code = 'STOPPED'
-            self.data.status_description = 'CHANGED'
+            self.data.status_code = _(u'STOPPED')
+            self.data.status_description = _(u'CHANGED')
             self.data.running_status = Resource.STATUS_STOPPED
             self.data.source_id = None
             self.emit('checked')
@@ -160,7 +163,7 @@ class Resource(GObject.GObject):
     def start(self):
         if self.can_start():
             self.data.running_status = Resource.STATUS_STARTED
-            self.data.status_code = 'RUNNING'
+            self.data.status_code = _(u'RUNNING')
             if self.data.interval > 10:
                 self.check_change()
             self.data.source_id = GLib.timeout_add_seconds(self.data.interval,
@@ -172,12 +175,12 @@ class Resource(GObject.GObject):
     def stop(self):
         if self.can_stop():
             self.data.running_status = Resource.STATUS_STOPPED
-            self.data.status_code = 'STOPPED'
+            self.data.status_code = _(u'STOPPED')
             if GLib.source_remove(self.data.source_id):
                 self.data.source_id = None
 
     def has_changed(self):
-        return self.data.status_description == 'CHANGED'
+        return self.data.status_description == _(u'CHANGED')
 
 
 class ResourceManager(GObject.GObject):

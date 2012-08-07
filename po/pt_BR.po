@@ -1,0 +1,170 @@
+# F5 Notifier - Brazilian Portuguese (pt_BR) translation file.
+# Copyright (C) 2012 George Kussumoto <contato@georgeyk.com.br>
+# This file is distributed under the same license as the F5 Notifier package.
+# George Kussumoto <contato@georgeyk.com.br>, 2012.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: f5-notifier 0.1.6\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-08-06 22:12-0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: George Kussumoto <contato@georgeyk.com.br>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../f5notifier/models.py:103 ../f5notifier/models.py:113
+msgid "ERROR"
+msgstr "ERRO"
+
+#: ../f5notifier/models.py:127 ../f5notifier/models.py:150
+#: ../f5notifier/models.py:178
+msgid "STOPPED"
+msgstr "INTERROMPIDO"
+
+#: ../f5notifier/models.py:140 ../f5notifier/models.py:166
+msgid "RUNNING"
+msgstr "RODANDO"
+
+#: ../f5notifier/models.py:147
+msgid "OK"
+msgstr "OK"
+
+#: ../f5notifier/models.py:151 ../f5notifier/models.py:183
+msgid "CHANGED"
+msgstr "ALTERADO"
+
+#: ../f5notifier/about.py:44
+msgid "F5 Notifier Homepage"
+msgstr "F5 Notifier Homepage"
+
+#: ../f5notifier/resource.py:84 ../data/ui/Resource.glade.h:1
+msgid "seconds"
+msgstr "segundos"
+
+#: ../f5notifier/resource.py:89 ../f5notifier/resource.py:103
+#: ../data/ui/Resource.glade.h:3
+msgid "hours"
+msgstr "horas"
+
+#: ../f5notifier/resource.py:101 ../data/ui/Resource.glade.h:2
+msgid "minutes"
+msgstr "minutos"
+
+#: ../f5notifier/main.py:71
+msgid "Monitor"
+msgstr "Monitor"
+
+#: ../f5notifier/resource_monitor.py:151
+msgid "Remove Resource"
+msgstr "Remover Recurso"
+
+#: ../f5notifier/resource_monitor.py:152
+msgid "Are you sure you want to remove the selected resource ?"
+msgstr "Você tem certeza que deseja remover o recurso selecionado ?"
+
+#: ../f5notifier/utils.py:76
+msgid "Error"
+msgstr "Erro"
+
+#: ../data/ui/ResourceMonitor.glade.h:1
+msgid "Resource Monitor"
+msgstr "Monitor de Recursos"
+
+#: ../data/ui/ResourceMonitor.glade.h:2
+msgid "Add"
+msgstr "Adicionar"
+
+#: ../data/ui/ResourceMonitor.glade.h:3
+msgid "Edit"
+msgstr "Editar"
+
+#: ../data/ui/ResourceMonitor.glade.h:4
+msgid "Remove"
+msgstr "Remover"
+
+#: ../data/ui/ResourceMonitor.glade.h:5
+msgid "Open"
+msgstr "Abrir"
+
+#: ../data/ui/ResourceMonitor.glade.h:6
+msgid "Start"
+msgstr "Iniciar"
+
+#: ../data/ui/ResourceMonitor.glade.h:7
+msgid "Stop"
+msgstr "Parar"
+
+#: ../data/ui/ResourceMonitor.glade.h:8
+msgid "Filter:"
+msgstr "Filtro:"
+
+#: ../data/ui/ResourceMonitor.glade.h:9
+msgid "URI"
+msgstr "URI"
+
+#: ../data/ui/ResourceMonitor.glade.h:10
+msgid "Status"
+msgstr "Status"
+
+#: ../data/ui/ResourceMonitor.glade.h:11
+msgid "Description"
+msgstr "Descrição"
+
+#: ../data/ui/ResourceMonitor.glade.h:12
+msgid "Last Checked"
+msgstr "Última Vericação"
+
+#: ../data/ui/Resource.glade.h:4
+msgid "Resource"
+msgstr "Recurso"
+
+#: ../data/ui/Resource.glade.h:5
+msgid "URI:"
+msgstr "URI:"
+
+#: ../data/ui/Resource.glade.h:6
+msgid "Interval:"
+msgstr "Intervalo:"
+
+#: ../data/ui/Resource.glade.h:7
+msgid "Advanced settings"
+msgstr "Configurações avançadas"
+
+#: ../data/ui/Settings.glade.h:1
+msgid "Settings"
+msgstr "Configurações"
+
+#: ../data/ui/Settings.glade.h:2
+msgid "F5 Notifier Settings"
+msgstr "Configuração F5 Notifier"
+
+#: ../data/ui/Settings.glade.h:3
+msgid "Disable Notifications:"
+msgstr "Desabilitar Notificações"
+
+#: ../data/ui/Settings.glade.h:4
+msgid "Use Extras Settings:"
+msgstr "Utilizar Configurações Extras"
+
+#: ../data/ui/Settings.glade.h:5
+msgid "Select a Folder"
+msgstr "Selecionar uma Pasta"
+
+#: ../data/ui/Settings.glade.h:6
+msgid ""
+"Extra settings overrides the default system settings.\n"
+"For example, you might have an extra settings under Dropbox/Ubuntu Folder.\n"
+"Then you can configure all F5 Notifier clients to use that and all of them "
+"will be synced.\n"
+"Note that this feature is very experimental at the moment."
+msgstr ""
+"Configurações extras sobrescrevem as configurações padrão do sistema.\n"
+"Por exemplo, você pode ter uma configuração extra dentro da pasta Dropbox/"
+"Ubuntu One.\n"
+"E então configurar todos os clientes F5 Notifier para usar essa configuração "
+"e todos eles serão sincronizados.\n"
+"Note que esse recurso é bem experimental no momento."
