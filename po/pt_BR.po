@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: f5-notifier 0.1.6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-29 01:05-0300\n"
+"POT-Creation-Date: 2012-08-06 22:12-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: George Kussumoto <contato@georgeyk.com.br>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,9 +16,43 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: ../f5notifier/models.py:103 ../f5notifier/models.py:113
+msgid "ERROR"
+msgstr "ERRO"
+
+#: ../f5notifier/models.py:127 ../f5notifier/models.py:150
+#: ../f5notifier/models.py:178
+msgid "STOPPED"
+msgstr "INTERROMPIDO"
+
+#: ../f5notifier/models.py:140 ../f5notifier/models.py:166
+msgid "RUNNING"
+msgstr "RODANDO"
+
+#: ../f5notifier/models.py:147
+msgid "OK"
+msgstr "OK"
+
+#: ../f5notifier/models.py:151 ../f5notifier/models.py:183
+msgid "CHANGED"
+msgstr "ALTERADO"
+
 #: ../f5notifier/about.py:44
 msgid "F5 Notifier Homepage"
 msgstr "F5 Notifier Homepage"
+
+#: ../f5notifier/resource.py:84 ../data/ui/Resource.glade.h:1
+msgid "seconds"
+msgstr "segundos"
+
+#: ../f5notifier/resource.py:89 ../f5notifier/resource.py:103
+#: ../data/ui/Resource.glade.h:3
+msgid "hours"
+msgstr "horas"
+
+#: ../f5notifier/resource.py:101 ../data/ui/Resource.glade.h:2
+msgid "minutes"
+msgstr "minutos"
 
 #: ../f5notifier/main.py:71
 msgid "Monitor"
@@ -83,18 +117,6 @@ msgstr "Descrição"
 #: ../data/ui/ResourceMonitor.glade.h:12
 msgid "Last Checked"
 msgstr "Última Vericação"
-
-#: ../data/ui/Resource.glade.h:1
-msgid "seconds"
-msgstr "segundos"
-
-#: ../data/ui/Resource.glade.h:2
-msgid "minutes"
-msgstr "minutos"
-
-#: ../data/ui/Resource.glade.h:3
-msgid "hours"
-msgstr "horas"
 
 #: ../data/ui/Resource.glade.h:4
 msgid "Resource"

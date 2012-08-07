@@ -19,6 +19,10 @@
 ##
 ##
 
+import locale
+from locale import gettext as _
+locale.textdomain('f5-notifier')
+
 from gi.repository import Gtk
 
 from f5notifier.models import Resource
@@ -77,12 +81,12 @@ class ResourceDialog(object):
 
     def _update_adjustment(self, unit):
         value = self.interval.get_value()
-        if unit == 'seconds':
+        if unit == _(u'seconds'):
             self.interval_adjustment.set_lower(5)
             self.interval_adjustment.set_upper(59)
             if value < 5:
                 self.interval.set_value(5)
-        elif unit == 'hours':
+        elif unit == _(u'hours'):
             self.interval_adjustment.set_lower(1)
             self.interval_adjustment.set_upper(23)
             if value > 23:
@@ -94,9 +98,9 @@ class ResourceDialog(object):
     def _get_interval_value(self):
         value = self.interval.get_value()
         unit = self._read_combo_unit_value()
-        if unit == 'minutes':
+        if unit == _(u'minutes'):
             value = value * 60
-        elif unit == 'hours':
+        elif unit == _(u'hours'):
             value = value * 60 * 60
         return int(value)
 
